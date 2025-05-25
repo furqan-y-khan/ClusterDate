@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j=76c!cm)h!=9_^2iia@gcrzcu)gd)pg%b-w-lwpi8j9&tuzhs'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-j=76c!cm)h!=9_^2iia@gcrzcu)gd)pg%b-w-lwpi8j9&tuzhs')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -72,6 +74,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -110,10 +113,11 @@ WSGI_APPLICATION = 'super_dating_app.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=os.environ.get('DATABASE_SSL_REQUIRE') == 'True' # Set to True in production if using SSL
+    )
 }
 
 
@@ -156,6 +160,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -178,42 +184,55 @@ REST_FRAMEWORK = {
 }
 
 # Channel layer settings
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+REDIS_URL = os.environ.get('REDIS_URL')
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [REDIS_URL],
+            },
         },
-    },
-}
+    }
+else:
+    # Fallback for local development if REDIS_URL is not set
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
+
 
 ASGI_APPLICATION = 'super_dating_app.asgi.application'
 
 # Firebase configuration
 FIREBASE_CONFIG = {
-    # This would be filled with your Firebase credentials
-    'apiKey': 'YOUR_API_KEY',
-    'authDomain': 'your-app.firebaseapp.com',
-    'projectId': 'your-app',
-    'storageBucket': 'your-app.appspot.com',
-    'messagingSenderId': 'YOUR_MESSAGING_SENDER_ID',
-    'appId': 'YOUR_APP_ID',
-    'measurementId': 'YOUR_MEASUREMENT_ID',
+    'apiKey': os.environ.get('FIREBASE_API_KEY'),
+    'authDomain': os.environ.get('FIREBASE_AUTH_DOMAIN'),
+    'projectId': os.environ.get('FIREBASE_PROJECT_ID'),
+    'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET'),
+    'messagingSenderId': os.environ.get('FIREBASE_MESSAGING_SENDER_ID'),
+    'appId': os.environ.get('FIREBASE_APP_ID'),
+    'measurementId': os.environ.get('FIREBASE_MEASUREMENT_ID'),
 }
 
 # Firebase settings
-FIREBASE_ADMIN_SDK_CREDENTIALS = {
-    "type": "service_account",
-    "project_id": "your-project-id",
-    "private_key_id": "your-private-key-id",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n",
-    "client_email": "your-client-email@your-project-id.iam.gserviceaccount.com",
-    "client_id": "your-client-id",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-client-email%40your-project-id.iam.gserviceaccount.com"
-}
+FIREBASE_ADMIN_SDK_CREDENTIALS_JSON = os.environ.get('FIREBASE_ADMIN_SDK_CREDENTIALS_JSON')
+if FIREBASE_ADMIN_SDK_CREDENTIALS_JSON:
+    try:
+        FIREBASE_ADMIN_SDK_CREDENTIALS = json.loads(FIREBASE_ADMIN_SDK_CREDENTIALS_JSON)
+    except json.JSONDecodeError:
+        # Handle error or raise an exception
+        print("Error: Invalid JSON in FIREBASE_ADMIN_SDK_CREDENTIALS_JSON")
+        FIREBASE_ADMIN_SDK_CREDENTIALS = {} # Default to empty dict or handle as appropriate
+else:
+    # Fallback or default if the environment variable is not set
+    FIREBASE_ADMIN_SDK_CREDENTIALS = {
+        "type": "service_account",
+        "project_id": "your-project-id",
+        # ... other default fields ...
+    }
+
 
 # Django AllAuth settings
 AUTHENTICATION_BACKENDS = [
@@ -228,30 +247,47 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_UNIQUE_EMAIL = True
 
 # Google Maps API Key
-GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'  # Replace with actual key in production
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', 'YOUR_GOOGLE_MAPS_API_KEY')  # Replace with actual key in production
 
 # WebPush settings for notifications
 WEBPUSH_SETTINGS = {
-    'VAPID_PUBLIC_KEY': 'YOUR_VAPID_PUBLIC_KEY',
-    'VAPID_PRIVATE_KEY': 'YOUR_VAPID_PRIVATE_KEY',
-    'VAPID_ADMIN_EMAIL': 'admin@example.com'
+    'VAPID_PUBLIC_KEY': os.environ.get('WEBPUSH_VAPID_PUBLIC_KEY'),
+    'VAPID_PRIVATE_KEY': os.environ.get('WEBPUSH_VAPID_PRIVATE_KEY'),
+    'VAPID_ADMIN_EMAIL': os.environ.get('WEBPUSH_VAPID_ADMIN_EMAIL', 'admin@example.com')
 }
 
 # FCM settings for mobile push notifications
 FCM_DJANGO_SETTINGS = {
     "APP_VERBOSE_NAME": "Super Dating App",
-    "FCM_SERVER_KEY": "YOUR_FCM_SERVER_KEY",
+    "FCM_SERVER_KEY": os.environ.get('FCM_SERVER_KEY'),
 }
 
 # File storage settings
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-# For production: 
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+if os.environ.get('AWS_STORAGE_BUCKET_NAME'):
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
+    AWS_S3_FILE_OVERWRITE = os.environ.get('AWS_S3_FILE_OVERWRITE', 'False').lower() == 'true' # Default to False
+    AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL', None) # Or 'public-read'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Security settings
+csrf_trusted_origins_env = os.environ.get('CSRF_TRUSTED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins_env.split(',') if csrf_trusted_origins_env else []
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG # Usually handled by web server, but good to have
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 2592000  # 30 days
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 
 # Rate Limiting
 RATE_LIMIT = {
@@ -300,75 +336,87 @@ LOGGING = {
     'handlers': {
         'console': {
             'level': 'INFO',
-            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/django.log',
-            'formatter': 'verbose',
+        'production_console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose', # Use verbose for production console
         },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'verbose',
         },
-        'security': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/security.log',
-            'formatter': 'verbose',
-        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console' if DEBUG else 'production_console', 'mail_admins'],
             'level': 'INFO',
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['mail_admins', 'file'],
+            'handlers': ['mail_admins'], # Keep mail_admins for errors
             'level': 'ERROR',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['security', 'mail_admins'],
+            'handlers': ['production_console', 'mail_admins'], # Log security issues to console
             'level': 'INFO',
             'propagate': False,
         },
         'core.middleware': {
-            'handlers': ['console', 'file', 'security'],
+            'handlers': ['production_console', 'mail_admins'], # Log middleware issues to console
             'level': 'INFO',
             'propagate': False,
         },
         'payments': {
-            'handlers': ['console', 'file'],
+            'handlers': ['production_console', 'mail_admins'], # Log payment issues to console
             'level': 'INFO',
             'propagate': True,
         },
     },
 }
 
-# Create log directory if it doesn't exist
-os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+if DEBUG:
+    # Create log directory if it doesn't exist (only in debug)
+    os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+    LOGGING['handlers']['file'] = {
+        'level': 'WARNING',
+        'class': 'logging.FileHandler',
+        'filename': BASE_DIR / 'logs/django.log',
+        'formatter': 'verbose',
+    }
+    LOGGING['handlers']['security_file'] = {
+        'level': 'INFO',
+        'class': 'logging.FileHandler',
+        'filename': BASE_DIR / 'logs/security.log',
+        'formatter': 'verbose',
+    }
+    LOGGING['loggers']['django']['handlers'] = ['console', 'file', 'mail_admins']
+    LOGGING['loggers']['django.request']['handlers'] = ['mail_admins', 'file']
+    LOGGING['loggers']['django.security']['handlers'] = ['security_file', 'mail_admins']
+    LOGGING['loggers']['core.middleware']['handlers'] = ['console', 'file', 'security_file', 'mail_admins']
+    LOGGING['loggers']['payments']['handlers'] = ['console', 'file', 'mail_admins']
+
 
 # Django Notifications swappable model
 NOTIFICATIONS_NOTIFICATION_MODEL = 'notifications_fix.Notification'
 
 # Stripe settings
-STRIPE_API_KEY = 'sk_test_your_stripe_api_key'
-STRIPE_PUBLIC_KEY = 'pk_test_your_stripe_public_key'
-STRIPE_WEBHOOK_SECRET = 'whsec_your_stripe_webhook_secret'
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_your_stripe_api_key')
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_your_stripe_public_key')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_your_stripe_webhook_secret')
 
-# Email settings for development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# For production, use SMTP backend:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.example.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@example.com'
-# EMAIL_HOST_PASSWORD = 'your-password'
-# DEFAULT_FROM_EMAIL = 'ClusterDate <noreply@clusterdate.com>'
+# Email settings
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS') == 'True'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'ClusterDate <noreply@clusterdate.com>')

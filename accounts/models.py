@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 class VerificationToken(models.Model):
     """
@@ -51,6 +53,11 @@ class PasswordResetToken(models.Model):
         return not self.is_used and timezone.now() < self.expires_at
 
 
+# IMPORTANT: The UserVerification model handles sensitive documents (ID and selfie).
+# Ensure that the storage backend (e.g., S3 bucket policies) and media serving configuration
+# in production restrict direct public access to the 'verification/id/' and 
+# 'verification/selfie/' paths. Files should ideally be served via a view that
+# checks user authentication and authorization.
 class UserVerification(models.Model):
     """
     Model to store user verification status and documents
@@ -69,6 +76,14 @@ class UserVerification(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     rejection_reason = models.TextField(blank=True)
+
+    def clean(self):
+        super().clean()
+        MAX_UPLOAD_SIZE = 5 * 1024 * 1024 # 5MB
+        if self.id_document and self.id_document.size > MAX_UPLOAD_SIZE:
+            raise ValidationError(_(f'ID document file size cannot exceed {MAX_UPLOAD_SIZE // (1024*1024)}MB.'))
+        if self.selfie and self.selfie.size > MAX_UPLOAD_SIZE:
+            raise ValidationError(_(f'Selfie file size cannot exceed {MAX_UPLOAD_SIZE // (1024*1024)}MB.'))
     
     def __str__(self):
         return f"Verification for {self.user.username} - {self.status}"

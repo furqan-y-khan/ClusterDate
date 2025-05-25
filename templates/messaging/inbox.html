@@ -280,6 +280,7 @@
     });
     
     // Set up auto-refresh for the conversation list (every 30 seconds)
+    const conversationUrlBase = "{% url 'messaging:conversation_detail' conversation_id=0 %}".replace('0/', ''); // Create a base URL, removing the placeholder '0/'
     setInterval(function() {
         fetch('{% url "messaging:inbox_refresh" %}')
             .then(response => response.json())
@@ -289,8 +290,9 @@
                     let conversationHtml = '';
                     data.conversations.forEach(function(conversation) {
                         const isActive = {% if active_conversation %}conversation.id === {{ active_conversation.id }}{% else %}false{% endif %};
+                        const conversationUrl = conversationUrlBase + conversation.id + '/';
                         conversationHtml += `
-                            <a href="/messaging/conversation/${conversation.id}/" class="list-group-item list-group-item-action ${isActive ? 'active' : ''}">
+                            <a href="${conversationUrl}" class="list-group-item list-group-item-action ${isActive ? 'active' : ''}">
                                 <div class="d-flex align-items-center">
                                     ${conversation.other_user.profile_picture ? 
                                         `<img src="${conversation.other_user.profile_picture}" alt="${conversation.other_user.username}" class="rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">` : 

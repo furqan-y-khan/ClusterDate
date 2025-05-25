@@ -10,8 +10,8 @@
         <p class="hero-subtitle">Welcome to Super Dating App - the ultimate platform for all your dating needs.</p>
         {% if not user.is_authenticated %}
         <div class="mt-4">
-            <a href="/accounts/register/" class="btn btn-light btn-lg me-2"><i class="fas fa-heart me-2"></i>Sign Up Now</a>
-            <a href="/accounts/login/" class="btn btn-outline-light btn-lg"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg me-2"><i class="fas fa-heart me-2"></i>Sign Up Now</a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
         </div>
         {% endif %}
     </div>
@@ -34,7 +34,7 @@
                 <p class="card-text">Traditional dating with swipe-based matching and detailed profiles.</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="badge badge-primary">Most Popular</span>
-                    <a href="/mainstream/" class="btn btn-sm btn-primary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="{% url 'mainstream:index' %}" class="btn btn-sm btn-primary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 <p class="card-text">For those seeking no-strings-attached relationships and hookups.</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="badge badge-secondary">Trending</span>
-                    <a href="/casual/" class="btn btn-sm btn-secondary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="{% url 'casual:index' %}" class="btn btn-sm btn-secondary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="card-body">
                 <p class="card-text">Connect with verified wealthy individuals for mutually beneficial relationships.</p>
                 <div class="text-end">
-                    <a href="/sugar/" class="btn btn-sm btn-success">Explore <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="{% url 'sugar:index' %}" class="btn btn-sm btn-success">Explore <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
             <div class="card-body">
                 <p class="card-text">Inclusive dating platform for the LGBTQ+ community.</p>
                 <div class="text-end">
-                    <a href="/lgbtq/" class="btn btn-sm btn-primary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="{% url 'lgbtq:index' %}" class="btn btn-sm btn-primary">Explore <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@
             <div class="card-body text-center">
                 <h5 class="card-title">Religion-Based</h5>
                 <p class="card-text">Connect with others who share your faith and values.</p>
-                <a href="/religion/" class="btn btn-primary">Explore</a>
+                <a href="{% url 'religion:index' %}" class="btn btn-primary">Explore</a>
             </div>
         </div>
     </div>
@@ -96,7 +96,7 @@
             <div class="card-body text-center">
                 <h5 class="card-title">Cultural/Ethnic</h5>
                 <p class="card-text">Find matches within your cultural or ethnic background.</p>
-                <a href="/ethnic/" class="btn btn-primary">Explore</a>
+                <a href="{% url 'ethnic:index' %}" class="btn btn-primary">Explore</a>
             </div>
         </div>
     </div>
@@ -105,7 +105,7 @@
             <div class="card-body text-center">
                 <h5 class="card-title">Serious Relationships</h5>
                 <p class="card-text">For those seeking long-term commitment and marriage.</p>
-                <a href="/serious/" class="btn btn-primary">Explore</a>
+                <a href="{% url 'serious:index' %}" class="btn btn-primary">Explore</a>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
             <div class="card-body text-center">
                 <h5 class="card-title">Niche Dating</h5>
                 <p class="card-text">Connect based on specific interests, hobbies, or lifestyles.</p>
-                <a href="/niche/" class="btn btn-primary">Explore</a>
+                <a href="{% url 'niche:index' %}" class="btn btn-primary">Explore</a>
             </div>
         </div>
     </div>
