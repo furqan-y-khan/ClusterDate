@@ -12,6 +12,8 @@
         </div>
     </div>
 
+    {# The filter form block below has been removed as per task instructions #}
+    {# 
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm">
@@ -61,6 +63,7 @@
             </div>
         </div>
     </div>
+    #}
 
     <div class="row">
         {% if profiles %}
@@ -99,7 +102,7 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-primary">{% trans "Back to Home" %}</a>
+            <a href="{% url 'ethnic:index' %}" class="btn btn-outline-primary">{% trans "Back to Home" %}</a> {# Changed ethnic_index to index #}
         </div>
     </div>
 </div>

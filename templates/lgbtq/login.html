@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Login to LGBTQ+ Dating" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="h4 mb-0">{% trans "Welcome Back!" %}</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-center text-muted mb-4">
+                        {% trans "Sign in to continue your journey with our LGBTQ+ community." %}
+                    </p>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Login" %}</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4">
+                        <p>{% trans "Don't have an account?" %} <a href="{% url 'lgbtq:register' %}">{% trans "Register here" %}</a></p>
+                        {# Assuming a site-wide password reset exists in 'accounts' app #}
+                        <p><a href="{% url 'accounts:forgot_password' %}">{% trans "Forgot your password?" %}</a></p> 
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'lgbtq:index' %}" class="text-muted small"><i class="fas fa-arrow-left me-1"></i> {% trans "Back to LGBTQ+ Home" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

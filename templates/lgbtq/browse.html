@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %} {# For placeholder image if needed #}
+{% load i18n %}
+
+{% block title %}{% trans "Browse LGBTQ+ Profiles" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">{% trans "Connect with Our Community" %}</h1>
+        <a href="{% url 'lgbtq:profile_edit' %}" class="btn btn-outline-primary">
+            <i class="fas fa-user-cog me-1"></i> {% trans "Update Your Profile & Preferences" %}
+        </a>
+    </div>
+    <p class="lead mb-4">{% trans "Discover profiles of vibrant individuals in our LGBTQ+ community." %}</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if profiles %}
+        <div class="row">
+            {% for lgbtq_profile_item in profiles %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm profile-card">
+                        {% with core_profile=lgbtq_profile_item.user.profile %}
+                            {% if core_profile.profile_picture %}
+                                <img src="{{ core_profile.profile_picture.url }}" class="card-img-top" alt="{{ lgbtq_profile_item.user.username }}'s profile picture" style="height: 250px; object-fit: cover;">
+                            {% else %}
+                                <div class="text-center py-5 bg-light" style="height: 250px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ lgbtq_profile_item.user.username }}</h5>
+                            
+                            {% if lgbtq_profile_item.gender_identity %}
+                                <p class="card-text text-muted small mb-1">
+                                    <strong>{% trans "Identifies as:" %}</strong> {{ lgbtq_profile_item.get_gender_identity_display }}
+                                </p>
+                            {% endif %}
+                            {% if lgbtq_profile_item.sexual_orientation %}
+                                <p class="card-text text-muted small mb-1">
+                                    <strong>{% trans "Orientation:" %}</strong> {{ lgbtq_profile_item.get_sexual_orientation_display }}
+                                </p>
+                            {% endif %}
+                             {% if lgbtq_profile_item.pronouns %}
+                                <p class="card-text text-muted small mb-2">
+                                    <strong>{% trans "Pronouns:" %}</strong> 
+                                    {% if lgbtq_profile_item.pronouns == 'CUSTOM' %}
+                                        {{ lgbtq_profile_item.custom_pronouns|default_if_none:"" }}
+                                    {% else %}
+                                        {{ lgbtq_profile_item.get_pronouns_display }}
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+
+                            <div class="mt-auto">
+                                {# Link to a future profile detail page for LGBTQ+ profiles #}
+                                {# For now, this can link to the core profile view if one exists, or be a placeholder #}
+                                <a href="{% url 'accounts:profile_view' username=lgbtq_profile_item.user.username %}" class="btn btn-primary btn-sm w-100">
+                                    {% trans "View Profile" %} <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h2 class="h4">{% trans "No profiles found yet" %}</h2>
+                <p class="text-muted">{% trans "Our community is growing! More profiles will be available soon. Ensure your profile is complete to appear in searches." %}</p>
+                 <a href="{% url 'lgbtq:profile_edit' %}" class="btn btn-success mt-2">
+                    <i class="fas fa-user-plus me-1"></i> {% trans "Complete Your Profile" %}
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+</style>
+{% endblock %}

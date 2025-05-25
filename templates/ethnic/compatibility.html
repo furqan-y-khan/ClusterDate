@@ -129,23 +129,11 @@
         </div>
     </div>
     
-    <div class="row mb-5">
-        <div class="col-lg-8 mx-auto">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h4 mb-3">{% trans "Take Our Cultural Compatibility Quiz" %}</h2>
-                    <p>{% trans "Find out which cultural elements matter most to you in relationships and improve your matching." %}</p>
-                    <div class="text-center mt-4">
-                        <a href="#" class="btn btn-primary">{% trans "Start Quiz" %}</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {# Removed "Take Our Cultural Compatibility Quiz" section as per task instructions #}
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-primary">{% trans "Back to Cultural Dating Home" %}</a>
+            <a href="{% url 'ethnic:index' %}" class="btn btn-outline-primary">{% trans "Back to Cultural Dating Home" %}</a> {# Changed ethnic_index to index #}
         </div>
     </div>
 </div>

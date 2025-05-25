@@ -20,42 +20,7 @@
                     <p>{% trans "Connect with singles who share your religious beliefs and practices. Our platform helps you find meaningful connections based on shared faith and values." %}</p>
                     
                     <div class="row mt-4">
-                        <div class="col-md-6">
-                            <form class="mb-4">
-                                <div class="mb-3">
-                                    <label for="religion" class="form-label">{% trans "Religion" %}</label>
-                                    <select class="form-select" id="religion">
-                                        <option value="" selected>{% trans "Select Religion" %}</option>
-                                        <option value="christianity">{% trans "Christianity" %}</option>
-                                        <option value="islam">{% trans "Islam" %}</option>
-                                        <option value="judaism">{% trans "Judaism" %}</option>
-                                        <option value="hinduism">{% trans "Hinduism" %}</option>
-                                        <option value="buddhism">{% trans "Buddhism" %}</option>
-                                        <option value="sikhism">{% trans "Sikhism" %}</option>
-                                        <option value="other">{% trans "Other" %}</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="denomination" class="form-label">{% trans "Denomination/Sect" %}</label>
-                                    <select class="form-select" id="denomination">
-                                        <option value="" selected>{% trans "Select Denomination" %}</option>
-                                        <option value="any">{% trans "Any Denomination" %}</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="importance" class="form-label">{% trans "Religious Importance" %}</label>
-                                    <select class="form-select" id="importance">
-                                        <option value="" selected>{% trans "Select Importance" %}</option>
-                                        <option value="very_important">{% trans "Very Important" %}</option>
-                                        <option value="important">{% trans "Important" %}</option>
-                                        <option value="somewhat_important">{% trans "Somewhat Important" %}</option>
-                                        <option value="not_important">{% trans "Not Important" %}</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">{% trans "Find Matches" %}</button>
-                            </form>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12"> {# Changed col-md-6 to col-md-12 as form is removed #}
                             <div class="bg-light p-4 rounded">
                                 <h3 class="h5 mb-3">{% trans "Popular Faith Communities" %}</h3>
                                 <div class="list-group">
@@ -139,47 +104,8 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a href="{% url 'religion:religion_home' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a>
+            <a href="{% url 'religion:index' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a> {# Changed religion_home to index #}
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const religionSelect = document.getElementById('religion');
-        const denominationSelect = document.getElementById('denomination');
-        
-        religionSelect.addEventListener('change', function() {
-            // Clear current options
-            denominationSelect.innerHTML = '<option value="" selected>{% trans "Select Denomination" %}</option><option value="any">{% trans "Any Denomination" %}</option>';
-            
-            // Add specific denominations based on selected religion
-            if (religionSelect.value === 'christianity') {
-                const denominations = ['Catholic', 'Protestant', 'Orthodox', 'Baptist', 'Methodist', 'Lutheran', 'Presbyterian', 'Pentecostal', 'Anglican/Episcopal', 'Seventh-Day Adventist', 'Mormon', 'Other Christian'];
-                denominations.forEach(denom => {
-                    const option = document.createElement('option');
-                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
-                    option.textContent = denom;
-                    denominationSelect.appendChild(option);
-                });
-            } else if (religionSelect.value === 'islam') {
-                const denominations = ['Sunni', 'Shia', 'Sufi', 'Other Muslim'];
-                denominations.forEach(denom => {
-                    const option = document.createElement('option');
-                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
-                    option.textContent = denom;
-                    denominationSelect.appendChild(option);
-                });
-            } else if (religionSelect.value === 'judaism') {
-                const denominations = ['Orthodox', 'Conservative', 'Reform', 'Reconstructionist', 'Other Jewish'];
-                denominations.forEach(denom => {
-                    const option = document.createElement('option');
-                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
-                    option.textContent = denom;
-                    denominationSelect.appendChild(option);
-                });
-            }
-        });
-    });
-</script>
 {% endblock %} 

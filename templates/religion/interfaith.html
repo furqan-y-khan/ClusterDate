@@ -110,56 +110,8 @@
                     <h2 class="h4 mb-0">{% trans "Find Your Interfaith Match" %}</h2>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">{% trans "Use our advanced matching system to find compatible partners from different faith backgrounds:" %}</p>
-                    
-                    <form class="row g-3">
-                        <div class="col-md-6">
-                            <label for="yourFaith" class="form-label">{% trans "Your Faith" %}</label>
-                            <select id="yourFaith" class="form-select">
-                                <option value="" selected>{% trans "Select Your Religion" %}</option>
-                                <option value="christianity">{% trans "Christianity" %}</option>
-                                <option value="islam">{% trans "Islam" %}</option>
-                                <option value="judaism">{% trans "Judaism" %}</option>
-                                <option value="hinduism">{% trans "Hinduism" %}</option>
-                                <option value="buddhism">{% trans "Buddhism" %}</option>
-                                <option value="sikhism">{% trans "Sikhism" %}</option>
-                                <option value="other">{% trans "Other" %}</option>
-                                <option value="spiritual">{% trans "Spiritual but not Religious" %}</option>
-                                <option value="agnostic">{% trans "Agnostic" %}</option>
-                                <option value="atheist">{% trans "Atheist" %}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="openToFaiths" class="form-label">{% trans "Open to Dating" %}</label>
-                            <select id="openToFaiths" class="form-select">
-                                <option value="any" selected>{% trans "Any Faith Background" %}</option>
-                                <option value="abrahamic">{% trans "Abrahamic Religions (Christianity, Islam, Judaism)" %}</option>
-                                <option value="dharmic">{% trans "Dharmic Religions (Hinduism, Buddhism, Jainism)" %}</option>
-                                <option value="specific">{% trans "Specific Religions" %}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="religiousImportance" class="form-label">{% trans "Religious Importance" %}</label>
-                            <select id="religiousImportance" class="form-select">
-                                <option value="">{% trans "Select Importance" %}</option>
-                                <option value="very">{% trans "Very Important" %}</option>
-                                <option value="somewhat">{% trans "Somewhat Important" %}</option>
-                                <option value="not">{% trans "Not Important" %}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="interfaithOpenness" class="form-label">{% trans "Interfaith Openness" %}</label>
-                            <select id="interfaithOpenness" class="form-select">
-                                <option value="">{% trans "Select Level" %}</option>
-                                <option value="very">{% trans "Very Open to Different Faiths" %}</option>
-                                <option value="somewhat">{% trans "Somewhat Open to Different Faiths" %}</option>
-                                <option value="specific">{% trans "Open to Specific Faiths Only" %}</option>
-                            </select>
-                        </div>
-                        <div class="col-12 text-center mt-4">
-                            <button type="submit" class="btn btn-primary px-5">{% trans "Find Matches" %}</button>
-                        </div>
-                    </form>
+                    <p class="mb-4">{% trans "This section is currently for informational purposes. Advanced interfaith matching features are under development." %}</p>
+                    {# Form removed as per simplification task #}
                 </div>
             </div>
         </div>
@@ -167,7 +119,7 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a href="{% url 'religion:religion_home' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a>
+            <a href="{% url 'religion:index' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a> {# Changed religion_home to index #}
         </div>
     </div>
 </div>

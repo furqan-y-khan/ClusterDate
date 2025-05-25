@@ -12,12 +12,24 @@
         <hr class="my-4 bg-light">
         <p>Join our diverse community today to find your perfect match!</p>
         <a class="btn btn-light btn-lg" href="{% url 'ethnic:register' %}" role="button">Sign Up Now</a>
-        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'ethnic:login' %}" role="button">Login</a>
-        {% else %}
-        <hr class="my-4 bg-light">
-        <p>Browse profiles, set your preferences, and connect with people who share your heritage!</p>
-        <a class="btn btn-light btn-lg" href="{% url 'ethnic:browse' %}" role="button">Browse Profiles</a>
-        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'ethnic:profile_edit' %}" role="button">Edit Profile</a>
+        <a class="btn btn-outline-light btn-lg ms-2" href="{% url 'ethnic:login' %}" role="button">Login</a> {# Changed ml-2 to ms-2 for consistency #}
+        {% else %} {# User is authenticated #}
+            {% if not has_ethnic_profile %}
+            <hr class="my-4 bg-light">
+            <p>Complete your cultural profile to start connecting with others who share your heritage.</p>
+            <a class="btn btn-light btn-lg" href="{% url 'ethnic:profile_edit' %}" role="button">
+                <i class="fas fa-user-plus me-2"></i>Create Your Cultural Profile
+            </a>
+            {% else %}
+            <hr class="my-4 bg-light">
+            <p>Explore profiles, refine your preferences, and connect with others who share your cultural background!</p>
+            <a class="btn btn-light btn-lg" href="{% url 'ethnic:browse' %}" role="button">
+                <i class="fas fa-search me-2"></i>Browse Profiles
+            </a>
+            <a class="btn btn-outline-light btn-lg ms-2" href="{% url 'ethnic:profile_edit' %}" role="button">
+                <i class="fas fa-edit me-2"></i>Edit Profile
+            </a>
+            {% endif %}
         {% endif %}
     </div>
 

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.pk %}{% trans "Edit LGBTQ+ Profile" %}{% else %}{% trans "Create LGBTQ+ Profile" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">
+                        {% if form.instance.pk %}{% trans "Update Your LGBTQ+ Profile" %}{% else %}{% trans "Create Your LGBTQ+ Profile" %}{% endif %}
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="card-text text-muted mb-4">
+                        {% trans "Share information about your identity, preferences, and what you're looking for. This helps us connect you with the right people." %}
+                    </p>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-4 text-end">
+                            <a href="{% url 'lgbtq:index' %}" class="btn btn-outline-secondary me-2">{% trans "Cancel" %}</a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.pk %}{% trans "Save Changes" %}{% else %}{% trans "Save Profile" %}{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleCustomPronouns(selectedValue) {
+    const customPronounsField = document.getElementById('id_custom_pronouns'); // Assuming default Django ID
+    const customPronounsWrapper = customPronounsField ? customPronounsField.closest('.mb-3') || customPronounsField.closest('div') : null; // Adjust selector for crispy forms if needed
+
+    if (selectedValue === 'CUSTOM') {
+        if (customPronounsWrapper) customPronounsWrapper.style.display = '';
+        if (customPronounsField) customPronounsField.setAttribute('required', 'required');
+    } else {
+        if (customPronounsWrapper) customPronounsWrapper.style.display = 'none';
+        if (customPronounsField) {
+             customPronounsField.removeAttribute('required');
+             customPronounsField.value = ''; // Clear value when hidden
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const pronounsSelect = document.getElementById('id_pronouns');
+    if (pronounsSelect) {
+        toggleCustomPronouns(pronounsSelect.value); // Initialize on page load
+
+        // Add event listener for changes
+        pronounsSelect.addEventListener('change', function() {
+            toggleCustomPronouns(this.value);
+        });
+    }
+});
+</script>
+{% endblock %}

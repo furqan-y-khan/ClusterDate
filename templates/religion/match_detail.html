@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ match_user.username }}'s Religion Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                {% with core_profile=match_user.profile %}
+                    {% if core_profile.profile_picture %}
+                        <img src="{{ core_profile.profile_picture.url }}" class="card-img-top" alt="{{ match_user.username }}'s profile picture">
+                    {% else %}
+                        <div class="text-center py-5 bg-light">
+                            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="card-body text-center">
+                    <h4 class="card-title">{{ match_user.username }}</h4>
+                    {% if match_user.profile.age and match_user.profile.location %}
+                        <p class="card-text text-muted">{{ match_user.profile.age }} &bull; {{ match_user.profile.location }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        {% if is_match %}
+                            <span class="badge bg-success fs-6"><i class="fas fa-check-circle me-1"></i> You are matched!</span>
+                        {% elif has_liked %}
+                            <button class="btn btn-secondary btn-sm" disabled><i class="fas fa-heart me-1"></i> Liked</button>
+                        {% else %}
+                            {# Assuming a core 'like_user' URL exists. Adjust if namespace or name is different #}
+                            {# This might need to be a POST request via AJAX for better UX #}
+                            <a href="{% url 'core:like_user' user_id=match_user.id %}" class="btn btn-danger btn-sm"> 
+                                <i class="fas fa-heart me-1"></i> Like Profile
+                            </a>
+                        {% endif %}
+                        {# Add other actions like 'Send Message' if applicable and messaging is integrated #}
+                        {# <a href="#" class="btn btn-primary btn-sm ms-2"><i class="fas fa-envelope me-1"></i> Message</a> #}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Compatibility</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="progress my-2" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ compatibility_percent }}%;" aria-valuenow="{{ compatibility_percent }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ compatibility_percent }}%
+                        </div>
+                    </div>
+                    <p class="text-muted mb-0">Based on your religious preferences.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Religious Profile Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Religion:</strong></div>
+                        <div class="col-sm-8">{{ match_profile.get_religion_display_value }}</div>
+                    </div>
+                    {% if match_profile.denomination %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Denomination:</strong></div>
+                        <div class="col-sm-8">{{ match_profile.get_denomination_display_value }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Religiosity:</strong></div>
+                        <div class="col-sm-8">{{ match_profile.get_religiosity_display }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4"><strong>Practice Frequency:</strong></div>
+                        <div class="col-sm-8">{{ match_profile.get_practice_frequency_display }}</div>
+                    </div>
+                    
+                    {% if match_profile.religious_values %}
+                    <hr>
+                    <h5>Religious Values & Beliefs</h5>
+                    <p>{{ match_profile.religious_values|linebreaksbr }}</p>
+                    {% endif %}
+
+                    <hr>
+                    <h5>Availability for Religious Activities</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <i class="fas {% if match_profile.available_for_worship %}fa-check-square text-success{% else %}fa-square text-muted{% endif %} me-2"></i>
+                            Attend worship services together
+                        </li>
+                        <li>
+                            <i class="fas {% if match_profile.available_for_prayer %}fa-check-square text-success{% else %}fa-square text-muted{% endif %} me-2"></i>
+                            Prayer or meditation together
+                        </li>
+                        <li>
+                            <i class="fas {% if match_profile.available_for_religious_study %}fa-check-square text-success{% else %}fa-square text-muted{% endif %} me-2"></i>
+                            Religious study together
+                        </li>
+                    </ul>
+                    
+                    <hr>
+                    <h5>Preferences</h5>
+                     <div class="row mb-2">
+                        <div class="col-sm-5"><strong>Preferred Religion:</strong></div>
+                        <div class="col-sm-7">
+                            {{ match_profile.get_religion_preference_display }}
+                            {% if match_profile.denomination_preference %}
+                                ({{ match_profile.get_denomination_preference_display }})
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-5"><strong>Preferred Religiosity:</strong></div>
+                        <div class="col-sm-7">
+                            {{ match_profile.get_min_religiosity_preference_display }} to 
+                            {{ match_profile.get_max_religiosity_preference_display }}
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-5"><strong>Interfaith Openness:</strong></div>
+                        <div class="col-sm-7">
+                            {% if match_profile.interfaith_willingness %}
+                                <span class="badge bg-info">Open to interfaith relationships</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Prefers same faith</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'religion:religion_matches' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Matches
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% comment %} 
+Helper to display choice field values. 
+This assumes a method get_field_display exists on ReligionProfile model, 
+or you might need to adjust how these are displayed.
+Example: {{ match_profile.get_min_religiosity_preference_display }}
+If such methods don't exist, you might need to pass choice display values through context 
+or create them in the model.
+For simplicity, the template uses direct access, assuming the model has `get_FIELD_display` methods
+for choice fields (which Django provides by default).
+The `get_field_display 'field_name'` is a placeholder for how you'd access display values for
+fields that are themselves choices (like religion_preference). Django provides `get_FOO_display()` for a field `FOO`.
+So, `match_profile.get_religion_preference_display` should work.
+The denomination_preference is tricky if it depends on religion_preference; this might need more context or a model method.
+For now, I'm using `get_field_display` as a placeholder for this complex preference display.
+A better way for `denomination_preference` would be to have a method on the model like `get_denomination_preference_display_value(self)`
+similar to `get_denomination_display_value(self)`.
+Let's assume `get_..._display` works for now.
+{% endcomment %}
