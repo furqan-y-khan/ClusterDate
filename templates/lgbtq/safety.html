@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Safety Tips for LGBTQ+ Dating" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h1 class="h3 mb-0"><i class="fas fa-shield-alt me-2"></i>{% trans "Our Commitment to Your Safety" %}</h1>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <p class="lead text-center mb-4">
+                        {% trans "Your safety and well-being are our top priorities. Here are some tips and resources to help you date safely and confidently within our LGBTQ+ community." %}
+                    </p>
+
+                    <h2 class="h4 mt-4 mb-3">{% trans "Online Safety" %}</h2>
+                    <ul>
+                        <li><strong>{% trans "Protect Your Information:" %}</strong> {% trans "Don't share personal details like your full name, address, workplace, or financial information too early. Get to know someone before revealing sensitive data." %}</li>
+                        <li><strong>{% trans "Use In-App Messaging:" %}</strong> {% trans "Utilize our secure messaging system initially. Avoid switching to personal email or phone numbers until you feel comfortable and have built trust." %}</li>
+                        <li><strong>{% trans "Be Wary of Red Flags:" %}</strong> {% trans "Watch out for users who pressure you for information, profess love too quickly, ask for money, or avoid video calls/meeting in person." %}</li>
+                        <li><strong>{% trans "Report Suspicious Behavior:" %}</strong> {% trans "If you encounter a profile or user that seems suspicious or makes you uncomfortable, please report them to us immediately." %}</li>
+                    </ul>
+
+                    <h2 class="h4 mt-4 mb-3">{% trans "Meeting in Person" %}</h2>
+                    <ul>
+                        <li><strong>{% trans "Meet in Public:" %}</strong> {% trans "For your first few dates, always choose a public place where others are around." %}</li>
+                        <li><strong>{% trans "Inform a Friend:" %}</strong> {% trans "Tell a trusted friend or family member about your date details: who you're meeting, where, and when. Arrange check-in times." %}</li>
+                        <li><strong>{% trans "Arrange Your Own Transportation:" %}</strong> {% trans "Control how you get to and from the date. Don't rely on your date for transport initially." %}</li>
+                        <li><strong>{% trans "Trust Your Instincts:" %}</strong> {% trans "If something feels off or unsafe, leave immediately. Your comfort and safety are paramount." %}</li>
+                        <li><strong>{% trans "Stay Sober:" %}</strong> {% trans "Avoid excessive alcohol or substances that could impair your judgment on a first date." %}</li>
+                    </ul>
+                    
+                    <h2 class="h4 mt-4 mb-3">{% trans "Consent and Boundaries" %}</h2>
+                    <ul>
+                        <li><strong>{% trans "Consent is Key:" %}</strong> {% trans "Ensure you have clear, enthusiastic, and ongoing consent for any physical intimacy. Consent can be withdrawn at any time." %}</li>
+                        <li><strong>{% trans "Respect Boundaries:" %}</strong> {% trans "Communicate your own boundaries clearly and respect the boundaries set by others." %}</li>
+                    </ul>
+
+                    <h2 class="h4 mt-4 mb-3">{% trans "Additional Resources" %}</h2>
+                    <p>{% trans "For more information on LGBTQ+ safety and support, please consider reaching out to local LGBTQ+ centers or national organizations." %}</p>
+                    {# Placeholder for actual resource links - to be implemented with CommunityResource model #}
+                    <p><em>({% trans "Links to community resources will be available here soon." %})</em></p>
+
+                    <div class="text-center mt-5">
+                        <a href="{% url 'lgbtq:index' %}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-1"></i> {% trans "Back to LGBTQ+ Home" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

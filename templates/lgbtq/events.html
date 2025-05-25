@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "LGBTQ+ Community Events" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3"><i class="fas fa-calendar-alt text-primary me-2"></i>{% trans "LGBTQ+ Community Events" %}</h1>
+            <p class="lead">{% trans "Connect, celebrate, and learn with our community. Find events near you." %}</p>
+        </div>
+    </div>
+
+    {# Placeholder for future event search/filtering form #}
+    <div class="alert alert-info text-center mb-5" role="alert">
+        <i class="fas fa-tools me-2"></i>
+        {% trans "Event search and filtering features are coming soon! For now, check out some example events below." %}
+    </div>
+
+    <div class="row">
+        {# Example Event 1 #}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm event-card">
+                <img src="{% static 'images/placeholders/lgbtq_pride_event.jpg' %}" class="card-img-top" alt="Pride Parade" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "City Pride Parade 2025" %}</h5>
+                    <p class="card-text text-muted small">
+                        <i class="fas fa-calendar-alt me-1"></i> June 28, 2025 <br>
+                        <i class="fas fa-map-marker-alt me-1"></i> Downtown Main Street
+                    </p>
+                    <p class="card-text">{% trans "Join us for the annual city pride parade! A celebration of love, diversity, and equality. Floats, music, and community." %}</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary btn-sm disabled">{% trans "Details Coming Soon" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Example Event 2 #}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm event-card">
+                <img src="{% static 'images/placeholders/lgbtq_support_group.jpg' %}" class="card-img-top" alt="Support Group" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "Weekly LGBTQ+ Support Circle" %}</h5>
+                    <p class="card-text text-muted small">
+                        <i class="fas fa-calendar-alt me-1"></i> Every Thursday, 7 PM <br>
+                        <i class="fas fa-map-marker-alt me-1"></i> The Community Center
+                    </p>
+                    <p class="card-text">{% trans "A safe and confidential space to share experiences, find support, and build connections. Open to all." %}</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary btn-sm disabled">{% trans "Contact for Info" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Example Event 3 #}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm event-card">
+                <img src="{% static 'images/placeholders/lgbtq_film_night.jpg' %}" class="card-img-top" alt="Film Night" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "Queer Film Night" %}</h5>
+                    <p class="card-text text-muted small">
+                        <i class="fas fa-calendar-alt me-1"></i> Last Friday of each month <br>
+                        <i class="fas fa-map-marker-alt me-1"></i> Indie Cinema House
+                    </p>
+                    <p class="card-text">{% trans "Join us for a screening and discussion of impactful LGBTQ+ films, both classic and contemporary." %}</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary btn-sm disabled">{% trans "See Schedule" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+         <p>{% trans "More event listings and the ability to create your own events are coming soon!" %}</p>
+        <a href="{% url 'lgbtq:index' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> {% trans "Back to LGBTQ+ Home" %}</a>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+</style>
+{% endblock %}

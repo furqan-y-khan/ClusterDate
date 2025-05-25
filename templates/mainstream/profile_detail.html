@@ -290,7 +290,7 @@
         </div>
         
         <div class="text-center mt-4">
-          <a href="{% url 'core:report_profile' profile.profile.user.username %}" class="text-muted">
+          <a href="{% url 'core:report_profile' user_id=profile.profile.user.id %}" class="text-muted">
             <i class="fas fa-flag"></i> {% trans "Report Profile" %}
           </a>
         </div>

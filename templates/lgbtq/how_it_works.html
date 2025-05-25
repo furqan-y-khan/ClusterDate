@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "How LGBTQ+ Dating Works" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3"><i class="fas fa-question-circle text-primary me-2"></i>{% trans "How It Works" %}</h1>
+            <p class="lead">{% trans "Connecting with our vibrant LGBTQ+ community is simple and empowering." %}</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="accordion shadow-sm" id="howItWorksAccordion">
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button fs-5 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="badge bg-primary rounded-pill me-3">1</span> {% trans "Create Your Authentic Profile" %}
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#howItWorksAccordion">
+                        <div class="accordion-body">
+                            <p>{% trans "Sign up and build your LGBTQ+ profile. Share your gender identity, sexual orientation, pronouns, and what you're looking for. The more you share, the better we can help you connect." %}</p>
+                            <a href="{% url 'lgbtq:profile_edit' %}" class="btn btn-sm btn-outline-primary">{% trans "Complete Your Profile" %}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button fs-5 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <span class="badge bg-primary rounded-pill me-3">2</span> {% trans "Discover & Browse Profiles" %}
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#howItWorksAccordion">
+                        <div class="accordion-body">
+                            <p>{% trans "Explore profiles of other LGBTQ+ individuals. Our platform is designed to be inclusive and respectful of all identities." %}</p>
+                            <p><small class="text-muted">({% trans "Advanced filtering and matching based on your specific preferences are features we are actively developing!" %})</small></p>
+                            <a href="{% url 'lgbtq:browse' %}" class="btn btn-sm btn-outline-primary">{% trans "Browse Profiles" %}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button fs-5 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="badge bg-primary rounded-pill me-3">3</span> {% trans "Connect & Chat Safely" %}
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#howItWorksAccordion">
+                        <div class="accordion-body">
+                            <p>{% trans "Once you find someone who sparks your interest, connect through our secure messaging system. Get to know each other in a safe environment." %}</p>
+                            <a href="{% url 'lgbtq:safety' %}" class="btn btn-sm btn-outline-primary">{% trans "Read Safety Tips" %}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button fs-5 fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            <span class="badge bg-primary rounded-pill me-3">4</span> {% trans "Engage with the Community" %}
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#howItWorksAccordion">
+                        <div class="accordion-body">
+                            <p>{% trans "Participate in community events, discussions, and access helpful resources. Our LGBTQ+ section is more than just dating; it's a space to connect and belong." %}</p>
+                            <p><small class="text-muted">({% trans "Full event listings and resource sections are under active development." %})</small></p>
+                            <a href="{% url 'lgbtq:events' %}" class="btn btn-sm btn-outline-primary">{% trans "View Example Events" %}</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="text-center mt-5">
+                <a href="{% url 'lgbtq:index' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> {% trans "Back to LGBTQ+ Home" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

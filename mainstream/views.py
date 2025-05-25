@@ -34,12 +34,7 @@ def create_profile(request):
     """
     Create or update a mainstream dating profile
     """
-    # Check if user already has a core profile first
-    try:
-        core_profile = request.user.profile
-    except Profile.DoesNotExist:
-        messages.error(request, "You need to create a basic profile first")
-        return redirect('core:create_profile')
+    core_profile = request.user.profile 
     
     # Check if user already has a mainstream profile
     try:
