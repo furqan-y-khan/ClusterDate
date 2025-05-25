@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %} {# Assuming crispy_forms is used, adjust if not #}
+
+{% block title %}
+    {% if profile %}Update Your Religion Profile{% else %}Create Your Religion Profile{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{% if profile %}Update Your Religion Profile{% else %}Create Your Religion Profile{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Please provide details about your religious beliefs and preferences to help us find compatible matches for you.</p>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }} {# Or use {{ form.as_p }} or manual field rendering #}
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if profile %}Update Profile{% else %}Save Profile{% endif %}
+                            </button>
+                            <a href="{% url 'religion:index' %}" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateDenominationOptions(religionCode, denominationSelectId) {
+    const denominationSelect = document.getElementById(denominationSelectId);
+    if (!denominationSelect) {
+        console.error("Denomination select element not found: " + denominationSelectId);
+        return;
+    }
+
+    // Clear existing options (except the first "---" if it exists)
+    while (denominationSelect.options.length > 1) {
+        denominationSelect.remove(1);
+    }
+    if (denominationSelect.options.length === 1 && denominationSelect.options[0].value !== "") {
+        // If the first option is not a placeholder, clear all
+        denominationSelect.innerHTML = '<option value="">---</option>';
+    } else if (denominationSelect.options.length === 0) {
+         denominationSelect.innerHTML = '<option value="">---</option>';
+    }
+
+
+    if (religionCode) {
+        fetch(`{% url 'religion:get_denominations' %}?religion=${religionCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.choices && data.choices.length > 0) {
+                    data.choices.forEach(choice => {
+                        const option = new Option(choice[1], choice[0]);
+                        denominationSelect.add(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching denominations:', error);
+            });
+    }
+}
+
+// Initialize denomination fields on page load if a religion is already selected (e.g., on form error or edit)
+document.addEventListener('DOMContentLoaded', function() {
+    const religionSelect = document.getElementById('id_religion');
+    const religionPrefSelect = document.getElementById('id_religion_preference');
+
+    if (religionSelect && religionSelect.value) {
+        updateDenominationOptions(religionSelect.value, 'id_denomination');
+    }
+    if (religionPrefSelect && religionPrefSelect.value) {
+        updateDenominationOptions(religionPrefSelect.value, 'id_denomination_preference');
+    }
+});
+</script>
+{% endblock %}

@@ -158,17 +158,17 @@ class ViewTests(TestCase):
     
     def test_home_view(self):
         """Test the home view"""
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('home'), secure=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'core/home.html')
     
     def test_profile_view_authenticated(self):
         """Test the profile view when authenticated"""
         self.client.login(username='testuser', password='testpassword')
-        response = self.client.get(reverse('accounts:profile_view', args=['testuser']))
+        response = self.client.get(reverse('accounts:profile_view', args=['testuser']), secure=True)
         self.assertEqual(response.status_code, 200)
     
     def test_profile_view_unauthenticated(self):
         """Test the profile view redirects when not authenticated"""
-        response = self.client.get(reverse('accounts:profile_view', args=['testuser']))
+        response = self.client.get(reverse('accounts:profile_view', args=['testuser']), secure=True)
         self.assertEqual(response.status_code, 302)  # Redirect to login

@@ -4,7 +4,7 @@ from . import views
 app_name = 'ethnic'
 
 urlpatterns = [
-    path('', views.index, name='ethnic_index'),
+    path('', views.index, name='index'),
     path('browse/', views.browse, name='browse'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('compatibility/', views.compatibility, name='compatibility'),

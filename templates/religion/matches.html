@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %} {# Consider adding if static assets like profile pics are used directly #}
+
+{% block title %}Your Religion Matches{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-heart-circle-check text-primary me-2"></i>Your Faith-Based Matches</h2>
+        <a href="{% url 'religion:religion_profile' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-sliders-h me-1"></i> Edit Preferences
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if matches %}
+        <div class="row">
+            {% for match_item in matches %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm match-card">
+                        {# Assuming core_profile.profile_picture exists for a general profile picture #}
+                        {% with core_profile=match_item.user.profile %} {# Access core Profile for general info #}
+                            {% if core_profile.profile_picture %}
+                                <img src="{{ core_profile.profile_picture.url }}" class="card-img-top" alt="{{ match_item.user.username }}'s profile picture" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="text-center py-5 bg-light">
+                                    <i class="fas fa-user-circle fa-4x text-secondary"></i>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ match_item.user.username }}</h5>
+                            <p class="card-text text-muted">
+                                {{ match_item.profile.get_religion_display_value }}
+                                {% if match_item.profile.denomination %}
+                                    ({{ match_item.profile.get_denomination_display_value }})
+                                {% endif %}
+                            </p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success">Compatibility: {{ match_item.compatibility_percent }}%</span>
+                                </div>
+                                <a href="{% url 'religion:religion_match_detail' username=match_item.user.username %}" class="btn btn-primary btn-sm w-100">
+                                    View Profile <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>No Matches Found</h4>
+                <p>We couldn't find any matches based on your current preferences. Try adjusting your religion profile settings for broader results.</p>
+                <a href="{% url 'religion:religion_profile' %}" class="btn btn-primary mt-2">
+                    <i class="fas fa-sliders-h me-1"></i> Update Your Preferences
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.match-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+</style>
+{% endblock %}

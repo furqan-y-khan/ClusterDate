@@ -4,7 +4,7 @@ from . import views
 app_name = 'mainstream'
 
 urlpatterns = [
-    path('', views.index, name='mainstream_index'),
+    path('', views.index, name='index'),
     path('profile/create/', views.create_profile, name='create_profile'),
     path('profile/view/', views.view_profile, name='view_profile'),
     path('browse/', views.browse_profiles, name='browse_profiles'),

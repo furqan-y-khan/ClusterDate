@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Core URLs
-    path('', core_views.home, name='home'),
+    path('', core_views.home, name='home'), # Reverted from '/' to ''
     path('about/', core_views.about, name='about'),
     path('privacy-policy/', core_views.privacy_policy, name='privacy_policy'),
     path('terms-of-service/', core_views.terms_of_service, name='terms_of_service'),

@@ -4,7 +4,7 @@ from . import views
 app_name = 'religion'
 
 urlpatterns = [
-    path('', views.religion_home, name='religion_home'),
+    path('', views.religion_home, name='index'),
     path('profile/', views.religion_profile, name='religion_profile'),
     path('get-denominations/', views.get_denominations, name='get_denominations'),
     path('matches/', views.religion_matches, name='religion_matches'),

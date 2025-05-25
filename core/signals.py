@@ -67,7 +67,7 @@ def notify_match(sender, instance, created, **kwargs):
     """
     Send notifications when a match is created
     """
-    if created and instance.is_mutual:
+    if created: # Removed instance.is_mutual check
         # Create database notifications
         Notification.objects.create(
             user=instance.user1,
@@ -110,9 +110,9 @@ def notify_like(sender, instance, created, **kwargs):
         ).first()
         
         if reverse_like:
-            # Create a match
-            Match.objects.get_or_create(
-                user1=instance.from_user,
-                user2=instance.to_user,
-                defaults={'is_mutual': True}
-            ) 
+            # Create a match, ensuring user1.id < user2.id for consistency
+            if instance.from_user.id < instance.to_user.id:
+                user1, user2 = instance.from_user, instance.to_user
+            else:
+                user1, user2 = instance.to_user, instance.from_user
+            Match.objects.get_or_create(user1=user1, user2=user2)
