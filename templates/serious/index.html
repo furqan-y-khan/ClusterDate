@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Serious Relationship Dating{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron bg-gradient-primary text-white">
+        <h1 class="display-4">Find Your Lifetime Partner</h1>
+        <p class="lead">Connect with singles who are looking for meaningful, long-term relationships and marriage.</p>
+        {% if not request.user.is_authenticated %}
+        <hr class="my-4 bg-light">
+        <p>Join our community of commitment-minded singles today!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'serious:register' %}" role="button">Sign Up Now</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'serious:login' %}" role="button">Login</a>
+        {% else %}
+        <hr class="my-4 bg-light">
+        <p>Browse profiles, set your preferences, and connect with compatible partners!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'serious:browse' %}" role="button">Browse Profiles</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'serious:profile_edit' %}" role="button">Edit Profile</a>
+        {% endif %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-search-plus fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">In-Depth Matching</h4>
+                    <p class="card-text">Our detailed personality questionnaire helps you find highly compatible matches based on key dimensions.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'serious:compatibility' %}" class="btn btn-primary btn-sm">Learn More</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                    <h4 class="card-title">Verified Profiles</h4>
+                    <p class="card-text">All members go through our verification process to ensure you're meeting genuine, serious singles.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'serious:verification' %}" class="btn btn-success btn-sm">Our Process</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                    <h4 class="card-title">Relationship Guidance</h4>
+                    <p class="card-text">Access relationship advice, dating coaches, and resources to build a lasting connection.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'serious:guidance' %}" class="btn btn-danger btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Success Stories</h2>
+            <p class="text-center">Couples who found lasting love on our platform</p>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <img src="{% static 'img/couple1.jpg' %}" alt="Sarah and John" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5 class="card-title">Sarah & John</h5>
+                    <p class="card-text">"After 6 months of dating, we got engaged! Thank you for connecting us."</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <img src="{% static 'img/couple2.jpg' %}" alt="Michael and Lisa" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5 class="card-title">Michael & Lisa</h5>
+                    <p class="card-text">"We just celebrated our 2-year wedding anniversary. Forever grateful!"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <img src="{% static 'img/couple3.jpg' %}" alt="David and Maria" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5 class="card-title">David & Maria</h5>
+                    <p class="card-text">"From first message to marriage in one year. Our compatibility was off the charts!"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 mb-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center py-5">
+                    <h3 class="mb-3">Ready to Find Your Forever Partner?</h3>
+                    <p class="lead">Join thousands of singles who are serious about finding lasting love and commitment.</p>
+                    <a href="{% url 'serious:register' %}" class="btn btn-primary btn-lg mt-3">Begin Your Journey</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

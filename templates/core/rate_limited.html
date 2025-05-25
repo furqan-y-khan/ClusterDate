@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Rate Limited - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <h1 class="card-title mb-4">Rate Limit Exceeded</h1>
+                    <p class="card-text lead">{{ message }}</p>
+                    <p class="mt-4">Please wait a few minutes before trying again.</p>
+                    <p class="text-muted mt-3">This helps us protect our service from overuse and ensure a good experience for all users.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary mt-4">Return to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

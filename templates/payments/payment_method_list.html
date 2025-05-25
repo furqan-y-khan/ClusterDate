@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Methods - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="section-title">Payment Methods</h2>
+            <p class="text-muted">Manage your payment methods for subscription billing</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'payments:add_payment_method' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i> Add New Payment Method
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if payment_methods %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Details</th>
+                                    <th>Expires</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for method in payment_methods %}
+                                <tr>
+                                    <td>
+                                        {% if method.payment_type == 'card' %}
+                                        <i class="fas fa-credit-card text-primary me-2"></i> Credit/Debit Card
+                                        {% else %}
+                                        <i class="fas fa-university text-primary me-2"></i> Bank Account
+                                        {% endif %}
+                                    </td>
+                                    <td>•••• •••• •••• {{ method.last_4 }}</td>
+                                    <td>
+                                        {% if method.expiry_month and method.expiry_year %}
+                                        {{ method.expiry_month }}/{{ method.expiry_year }}
+                                        {% else %}
+                                        N/A
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if method.is_default %}
+                                        <span class="badge bg-success">Default</span>
+                                        {% else %}
+                                        <span class="badge bg-light text-dark">Saved</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not method.is_default %}
+                                        <form method="post" action="{% url 'payments:set_default_payment_method' method.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Set Default</button>
+                                        </form>
+                                        {% endif %}
+                                        
+                                        <form method="post" action="{% url 'payments:delete_payment_method' method.id %}" class="d-inline ms-2">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-credit-card fa-3x text-muted mb-3"></i>
+                        <h4>No Payment Methods Added</h4>
+                        <p class="text-muted">You haven't added any payment methods yet.</p>
+                        <a href="{% url 'payments:add_payment_method' %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-plus-circle me-2"></i> Add Payment Method
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

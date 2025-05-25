@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Cultural Compatibility" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{% trans "Cultural Compatibility" %}</h1>
+            <p class="lead">{% trans "Building connections based on shared heritage and traditions" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">{% trans "Why Cultural Background Matters" %}</h2>
+                    <p>{% trans "Cultural compatibility plays a significant role in relationship success. When partners share cultural values, traditions, and experiences, they often have a deeper understanding of each other's perspectives and family dynamics." %}</p>
+                    
+                    <div class="mt-4">
+                        <h3 class="h5 mb-3">{% trans "Benefits of Cultural Compatibility" %}</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Shared customs and traditions" %}
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Better understanding of family expectations" %}
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Similar upbringing and values" %}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Common language and communication styles" %}
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Aligned perspectives on important life decisions" %}
+                                    </li>
+                                    <li class="list-group-item bg-transparent">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% trans "Shared food preferences and celebrations" %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-4">{% trans "Our Cultural Compatibility Matching" %}</h2>
+                    <p class="mb-4">{% trans "Our matching algorithm takes cultural background into account to help you find compatible matches based on:" %}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Cultural Identity" %}</h3>
+                            </div>
+                            <p>{% trans "Match with people who share your ethnic background or cultural identity." %}</p>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-language"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Language" %}</h3>
+                            </div>
+                            <p>{% trans "Connect with singles who speak your native language or share multilingual skills." %}</p>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-hands"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Traditions & Customs" %}</h3>
+                            </div>
+                            <p>{% trans "Find people who observe similar traditions, holidays, and cultural practices." %}</p>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Food & Lifestyle" %}</h3>
+                            </div>
+                            <p>{% trans "Connect based on shared cuisine preferences and cultural lifestyle elements." %}</p>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Family Values" %}</h3>
+                            </div>
+                            <p>{% trans "Match with people who share similar views on family structure and relationships." %}</p>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Cultural Importance" %}</h3>
+                            </div>
+                            <p>{% trans "Find others who prioritize cultural heritage similarly to you." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">{% trans "Take Our Cultural Compatibility Quiz" %}</h2>
+                    <p>{% trans "Find out which cultural elements matter most to you in relationships and improve your matching." %}</p>
+                    <div class="text-center mt-4">
+                        <a href="#" class="btn btn-primary">{% trans "Start Quiz" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-primary">{% trans "Back to Cultural Dating Home" %}</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}Call Feedback - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feedback-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .call-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .call-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+    }
+    
+    .call-avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 20px;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .call-details {
+        flex-grow: 1;
+    }
+    
+    .call-with {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+    
+    .call-time {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .call-type {
+        margin-left: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .rating-group {
+        margin-bottom: 25px;
+    }
+    
+    .rating-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .star-rating input {
+        display: none;
+    }
+    
+    .star-rating label {
+        cursor: pointer;
+        font-size: 30px;
+        color: #ddd;
+        margin-right: 5px;
+    }
+    
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+    
+    .submit-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    
+    .submit-btn:hover {
+        background-color: #0069d9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Call Feedback</h1>
+    
+    <div class="feedback-container">
+        <div class="call-info">
+            {% if request.user == call_session.caller %}
+                {% if call_session.receiver.profile.profile_picture %}
+                    <img src="{{ call_session.receiver.profile.profile_picture.url }}" alt="{{ call_session.receiver.username }}" class="call-avatar">
+                {% else %}
+                    <div class="call-avatar-placeholder">
+                        {{ call_session.receiver.username.0|upper }}
+                    </div>
+                {% endif %}
+                <div class="call-details">
+                    <div class="call-with">Call with {{ call_session.receiver.username }}</div>
+                    <div class="call-time">{{ call_session.started_at|date:"M d, Y" }} at {{ call_session.started_at|time:"g:i A" }}</div>
+                </div>
+            {% else %}
+                {% if call_session.caller.profile.profile_picture %}
+                    <img src="{{ call_session.caller.profile.profile_picture.url }}" alt="{{ call_session.caller.username }}" class="call-avatar">
+                {% else %}
+                    <div class="call-avatar-placeholder">
+                        {{ call_session.caller.username.0|upper }}
+                    </div>
+                {% endif %}
+                <div class="call-details">
+                    <div class="call-with">Call with {{ call_session.caller.username }}</div>
+                    <div class="call-time">{{ call_session.started_at|date:"M d, Y" }} at {{ call_session.started_at|time:"g:i A" }}</div>
+                </div>
+            {% endif %}
+            
+            <div class="call-type">
+                {% if call_session.call_type == 'VIDEO' %}
+                    <i class="fas fa-video"></i>
+                {% else %}
+                    <i class="fas fa-phone-alt"></i>
+                {% endif %}
+            </div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="rating-group">
+                <label class="rating-label">Overall Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="rating-5" name="rating" value="5" required>
+                    <label for="rating-5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="rating-4" name="rating" value="4">
+                    <label for="rating-4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="rating-3" name="rating" value="3">
+                    <label for="rating-3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="rating-2" name="rating" value="2">
+                    <label for="rating-2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="rating-1" name="rating" value="1">
+                    <label for="rating-1"><i class="fas fa-star"></i></label>
+                </div>
+            </div>
+            
+            {% if call_session.call_type == 'AUDIO' or call_session.call_type == 'VIDEO' %}
+            <div class="rating-group">
+                <label class="rating-label">Audio Quality</label>
+                <div class="star-rating">
+                    <input type="radio" id="audio-5" name="audio_quality" value="5">
+                    <label for="audio-5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="audio-4" name="audio_quality" value="4">
+                    <label for="audio-4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="audio-3" name="audio_quality" value="3">
+                    <label for="audio-3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="audio-2" name="audio_quality" value="2">
+                    <label for="audio-2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="audio-1" name="audio_quality" value="1">
+                    <label for="audio-1"><i class="fas fa-star"></i></label>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if call_session.call_type == 'VIDEO' %}
+            <div class="rating-group">
+                <label class="rating-label">Video Quality</label>
+                <div class="star-rating">
+                    <input type="radio" id="video-5" name="video_quality" value="5">
+                    <label for="video-5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="video-4" name="video_quality" value="4">
+                    <label for="video-4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="video-3" name="video_quality" value="3">
+                    <label for="video-3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="video-2" name="video_quality" value="2">
+                    <label for="video-2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="video-1" name="video_quality" value="1">
+                    <label for="video-1"><i class="fas fa-star"></i></label>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="rating-group">
+                <label class="rating-label">Connection Stability</label>
+                <div class="star-rating">
+                    <input type="radio" id="connection-5" name="connection_stability" value="5">
+                    <label for="connection-5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="connection-4" name="connection_stability" value="4">
+                    <label for="connection-4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="connection-3" name="connection_stability" value="3">
+                    <label for="connection-3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="connection-2" name="connection_stability" value="2">
+                    <label for="connection-2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="connection-1" name="connection_stability" value="1">
+                    <label for="connection-1"><i class="fas fa-star"></i></label>
+                </div>
+            </div>
+            
+            <div class="form-group mb-4">
+                <label for="comments" class="rating-label">Additional Comments</label>
+                <textarea id="comments" name="comments" class="form-control" rows="4" placeholder="Share your experience..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %} 

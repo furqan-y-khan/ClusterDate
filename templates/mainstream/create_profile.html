@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% if is_new %}{% trans "Create Mainstream Profile" %}{% else %}{% trans "Edit Mainstream Profile" %}{% endif %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-form-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .form-section {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+  
+  .form-section:last-child {
+    border-bottom: none;
+  }
+  
+  .form-section h4 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+  }
+  
+  .photo-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 2px solid #eee;
+  }
+  
+  .btn-primary {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+  }
+  
+  .btn-primary:hover {
+    background-color: #ff5252;
+    border-color: #ff5252;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="profile-form-container">
+        <h2 class="text-center mb-4">
+          {% if is_new %}
+            {% trans "Create Your Mainstream Dating Profile" %}
+          {% else %}
+            {% trans "Edit Your Mainstream Dating Profile" %}
+          {% endif %}
+        </h2>
+        
+        <p class="text-center text-muted mb-4">
+          {% trans "Complete your profile to increase your chances of finding your perfect match" %}
+        </p>
+        
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+          
+          <div class="form-section">
+            <h4>{% trans "Basic Information" %}</h4>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Relationship Status" %}</label>
+                {{ form.relationship_status }}
+                {% if form.relationship_status.errors %}
+                  <small class="text-danger">{{ form.relationship_status.errors }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Looking For" %}</label>
+                {{ form.looking_for }}
+                {% if form.looking_for.errors %}
+                  <small class="text-danger">{{ form.looking_for.errors }}</small>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Education Level" %}</label>
+                {{ form.education_level }}
+                {% if form.education_level.errors %}
+                  <small class="text-danger">{{ form.education_level.errors }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Occupation" %}</label>
+                {{ form.occupation }}
+                {% if form.occupation.errors %}
+                  <small class="text-danger">{{ form.occupation.errors }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h4>{% trans "Preferences" %}</h4>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Interested In" %}</label>
+                {{ form.interested_in_gender }}
+                {% if form.interested_in_gender.errors %}
+                  <small class="text-danger">{{ form.interested_in_gender.errors }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h4>{% trans "Lifestyle" %}</h4>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Do you have children?" %}</label>
+                {{ form.has_children }}
+                {% if form.has_children.errors %}
+                  <small class="text-danger">{{ form.has_children.errors }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Do you want children?" %}</label>
+                {{ form.wants_children }}
+                {% if form.wants_children.errors %}
+                  <small class="text-danger">{{ form.wants_children.errors }}</small>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Do you smoke?" %}</label>
+                {{ form.smoker }}
+                {% if form.smoker.errors %}
+                  <small class="text-danger">{{ form.smoker.errors }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Do you drink?" %}</label>
+                {{ form.drinker }}
+                {% if form.drinker.errors %}
+                  <small class="text-danger">{{ form.drinker.errors }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h4>{% trans "Photos" %}</h4>
+            <p class="text-muted">{% trans "Upload up to 4 photos to show yourself. First photo will be your main profile photo." %}</p>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Photo 1" %} ({% trans "Primary" %})</label>
+                {{ form.photo_1 }}
+                {% if form.photo_1.errors %}
+                  <small class="text-danger">{{ form.photo_1.errors }}</small>
+                {% endif %}
+                {% if form.instance.photo_1 %}
+                  <div class="mt-2">
+                    <img src="{{ form.instance.photo_1.url }}" class="photo-preview" alt="Photo 1">
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Photo 2" %}</label>
+                {{ form.photo_2 }}
+                {% if form.photo_2.errors %}
+                  <small class="text-danger">{{ form.photo_2.errors }}</small>
+                {% endif %}
+                {% if form.instance.photo_2 %}
+                  <div class="mt-2">
+                    <img src="{{ form.instance.photo_2.url }}" class="photo-preview" alt="Photo 2">
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>{% trans "Photo 3" %}</label>
+                {{ form.photo_3 }}
+                {% if form.photo_3.errors %}
+                  <small class="text-danger">{{ form.photo_3.errors }}</small>
+                {% endif %}
+                {% if form.instance.photo_3 %}
+                  <div class="mt-2">
+                    <img src="{{ form.instance.photo_3.url }}" class="photo-preview" alt="Photo 3">
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 form-group">
+                <label>{% trans "Photo 4" %}</label>
+                {{ form.photo_4 }}
+                {% if form.photo_4.errors %}
+                  <small class="text-danger">{{ form.photo_4.errors }}</small>
+                {% endif %}
+                {% if form.instance.photo_4 %}
+                  <div class="mt-2">
+                    <img src="{{ form.instance.photo_4.url }}" class="photo-preview" alt="Photo 4">
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+              {% if is_new %}
+                {% trans "Create Profile" %}
+              {% else %}
+                {% trans "Save Changes" %}
+              {% endif %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Preview uploaded images
+    $('input[type="file"]').change(function(e) {
+      var input = $(this);
+      if (input[0].files && input[0].files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+          var preview = input.parent().find('.photo-preview');
+          if (preview.length === 0) {
+            preview = $('<img class="photo-preview" alt="Photo preview">');
+            input.after('<div class="mt-2"></div>').next().append(preview);
+          }
+          preview.attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input[0].files[0]);
+      }
+    });
+  });
+</script>
+{% endblock %} 

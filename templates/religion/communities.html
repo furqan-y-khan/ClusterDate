@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Religious Communities" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{% trans "Religious Communities" %}</h1>
+            <p class="lead">{% trans "Find people who share your faith and worship practices" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">{% trans "Find Your Faith Community" %}</h2>
+                    <p>{% trans "Connect with singles who share your religious beliefs and practices. Our platform helps you find meaningful connections based on shared faith and values." %}</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <form class="mb-4">
+                                <div class="mb-3">
+                                    <label for="religion" class="form-label">{% trans "Religion" %}</label>
+                                    <select class="form-select" id="religion">
+                                        <option value="" selected>{% trans "Select Religion" %}</option>
+                                        <option value="christianity">{% trans "Christianity" %}</option>
+                                        <option value="islam">{% trans "Islam" %}</option>
+                                        <option value="judaism">{% trans "Judaism" %}</option>
+                                        <option value="hinduism">{% trans "Hinduism" %}</option>
+                                        <option value="buddhism">{% trans "Buddhism" %}</option>
+                                        <option value="sikhism">{% trans "Sikhism" %}</option>
+                                        <option value="other">{% trans "Other" %}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="denomination" class="form-label">{% trans "Denomination/Sect" %}</label>
+                                    <select class="form-select" id="denomination">
+                                        <option value="" selected>{% trans "Select Denomination" %}</option>
+                                        <option value="any">{% trans "Any Denomination" %}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="importance" class="form-label">{% trans "Religious Importance" %}</label>
+                                    <select class="form-select" id="importance">
+                                        <option value="" selected>{% trans "Select Importance" %}</option>
+                                        <option value="very_important">{% trans "Very Important" %}</option>
+                                        <option value="important">{% trans "Important" %}</option>
+                                        <option value="somewhat_important">{% trans "Somewhat Important" %}</option>
+                                        <option value="not_important">{% trans "Not Important" %}</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">{% trans "Find Matches" %}</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-4 rounded">
+                                <h3 class="h5 mb-3">{% trans "Popular Faith Communities" %}</h3>
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        {% trans "Christian Singles" %}
+                                        <span class="badge bg-primary rounded-pill">1,245</span>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        {% trans "Muslim Matrimony" %}
+                                        <span class="badge bg-primary rounded-pill">893</span>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        {% trans "Jewish Singles" %}
+                                        <span class="badge bg-primary rounded-pill">652</span>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        {% trans "Hindu Matrimony" %}
+                                        <span class="badge bg-primary rounded-pill">574</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-4">{% trans "Community Events" %}</h2>
+                    <p class="mb-4">{% trans "Join faith-based events to meet like-minded singles in your area. These events provide a comfortable environment to make meaningful connections." %}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-2">{% trans "Interfaith Mixer" %}</h3>
+                                    <p class="text-muted mb-2"><i class="fas fa-calendar-alt me-2"></i> Mar 15, 2025</p>
+                                    <p class="text-muted mb-3"><i class="fas fa-map-marker-alt me-2"></i> New York, NY</p>
+                                    <p class="card-text">{% trans "Meet singles from different faith backgrounds in a relaxed social setting." %}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">{% trans "Learn More" %}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-2">{% trans "Christian Singles Night" %}</h3>
+                                    <p class="text-muted mb-2"><i class="fas fa-calendar-alt me-2"></i> Mar 22, 2025</p>
+                                    <p class="text-muted mb-3"><i class="fas fa-map-marker-alt me-2"></i> Los Angeles, CA</p>
+                                    <p class="card-text">{% trans "An evening of fellowship, fun activities, and meeting other Christian singles." %}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">{% trans "Learn More" %}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-2">{% trans "Spiritual Retreat Weekend" %}</h3>
+                                    <p class="text-muted mb-2"><i class="fas fa-calendar-alt me-2"></i> Apr 5-7, 2025</p>
+                                    <p class="text-muted mb-3"><i class="fas fa-map-marker-alt me-2"></i> Denver, CO</p>
+                                    <p class="card-text">{% trans "A weekend of spiritual growth, reflection, and connecting with other singles of faith." %}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">{% trans "Learn More" %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'religion:religion_home' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const religionSelect = document.getElementById('religion');
+        const denominationSelect = document.getElementById('denomination');
+        
+        religionSelect.addEventListener('change', function() {
+            // Clear current options
+            denominationSelect.innerHTML = '<option value="" selected>{% trans "Select Denomination" %}</option><option value="any">{% trans "Any Denomination" %}</option>';
+            
+            // Add specific denominations based on selected religion
+            if (religionSelect.value === 'christianity') {
+                const denominations = ['Catholic', 'Protestant', 'Orthodox', 'Baptist', 'Methodist', 'Lutheran', 'Presbyterian', 'Pentecostal', 'Anglican/Episcopal', 'Seventh-Day Adventist', 'Mormon', 'Other Christian'];
+                denominations.forEach(denom => {
+                    const option = document.createElement('option');
+                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = denom;
+                    denominationSelect.appendChild(option);
+                });
+            } else if (religionSelect.value === 'islam') {
+                const denominations = ['Sunni', 'Shia', 'Sufi', 'Other Muslim'];
+                denominations.forEach(denom => {
+                    const option = document.createElement('option');
+                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = denom;
+                    denominationSelect.appendChild(option);
+                });
+            } else if (religionSelect.value === 'judaism') {
+                const denominations = ['Orthodox', 'Conservative', 'Reform', 'Reconstructionist', 'Other Jewish'];
+                denominations.forEach(denom => {
+                    const option = document.createElement('option');
+                    option.value = denom.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = denom;
+                    denominationSelect.appendChild(option);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %} 

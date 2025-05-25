@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .auth-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+    
+    .auth-divider::before,
+    .auth-divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .auth-divider-text {
+        padding: 0 10px;
+        color: #6c757d;
+    }
+    
+    .social-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 12px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        font-size: 16px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .social-login-btn:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .social-login-btn img {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        height: 50px;
+        border-radius: 5px;
+    }
+    
+    .register-btn {
+        width: 100%;
+        height: 50px;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .register-btn:hover {
+        background-color: #0069d9;
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .error-message {
+        color: #dc3545;
+        margin-top: 10px;
+        text-align: center;
+    }
+    
+    .password-requirements {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .password-requirements ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <h2 class="auth-title">Create an Account</h2>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <button id="google-register" class="social-login-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign up with Google
+        </button>
+        
+        <button id="facebook-register" class="social-login-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" alt="Facebook">
+            Sign up with Facebook
+        </button>
+        
+        <div class="auth-divider">
+            <span class="auth-divider-text">or</span>
+        </div>
+        
+        <form id="email-register-form">
+            <div class="form-group">
+                <input type="text" id="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+                <div class="password-requirements">
+                    Password must:
+                    <ul>
+                        <li>Be at least 8 characters long</li>
+                        <li>Contain at least one uppercase letter</li>
+                        <li>Contain at least one number</li>
+                        <li>Contain at least one special character</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirm-password" class="form-control" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="terms-checkbox" required>
+                <label class="form-check-label" for="terms-checkbox">
+                    I agree to the <a href="{% url 'terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+            <button type="submit" class="register-btn">Create Account</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "{{ FIREBASE_CONFIG.apiKey }}",
+        authDomain: "{{ FIREBASE_CONFIG.authDomain }}",
+        projectId: "{{ FIREBASE_CONFIG.projectId }}",
+        storageBucket: "{{ FIREBASE_CONFIG.storageBucket }}",
+        messagingSenderId: "{{ FIREBASE_CONFIG.messagingSenderId }}",
+        appId: "{{ FIREBASE_CONFIG.appId }}",
+        measurementId: "{{ FIREBASE_CONFIG.measurementId }}"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    
+    // Get elements
+    const googleRegisterBtn = document.getElementById('google-register');
+    const facebookRegisterBtn = document.getElementById('facebook-register');
+    const emailRegisterForm = document.getElementById('email-register-form');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Google registration
+    googleRegisterBtn.addEventListener('click', () => {
+        if (!termsCheckbox.checked) {
+            errorMessage.textContent = 'You must agree to the Terms of Service and Privacy Policy';
+            return;
+        }
+        
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                // Get the user's ID token
+                return result.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return registerWithBackend(idToken, 'google', result.user.displayName || '');
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Facebook registration
+    facebookRegisterBtn.addEventListener('click', () => {
+        if (!termsCheckbox.checked) {
+            errorMessage.textContent = 'You must agree to the Terms of Service and Privacy Policy';
+            return;
+        }
+        
+        const provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                // Get the user's ID token
+                return result.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return registerWithBackend(idToken, 'facebook', result.user.displayName || '');
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Email/password registration
+    emailRegisterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const username = usernameInput.value;
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        // Validate password
+        if (!validatePassword(password)) {
+            errorMessage.textContent = 'Password does not meet requirements';
+            return;
+        }
+        
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            errorMessage.textContent = 'Passwords do not match';
+            return;
+        }
+        
+        // Check if terms are accepted
+        if (!termsCheckbox.checked) {
+            errorMessage.textContent = 'You must agree to the Terms of Service and Privacy Policy';
+            return;
+        }
+        
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Update profile with username
+                return userCredential.user.updateProfile({
+                    displayName: username
+                }).then(() => userCredential.user.getIdToken());
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return registerWithBackend(idToken, 'email', username);
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Validate password
+    function validatePassword(password) {
+        // At least 8 characters
+        if (password.length < 8) return false;
+        
+        // At least one uppercase letter
+        if (!/[A-Z]/.test(password)) return false;
+        
+        // At least one number
+        if (!/[0-9]/.test(password)) return false;
+        
+        // At least one special character
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return false;
+        
+        return true;
+    }
+    
+    // Send the token to the backend for registration
+    function registerWithBackend(idToken, provider, username) {
+        return fetch('{% url "accounts:firebase_register" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                idToken: idToken,
+                provider: provider,
+                username: username
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Registration failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Redirect to the specified URL
+                window.location.href = data.redirect_url;
+            } else {
+                throw new Error(data.error || 'Registration failed');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            errorMessage.textContent = error.message;
+        });
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %} 

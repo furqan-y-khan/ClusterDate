@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Error Handling Documentation - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title mb-4">Error Handling Documentation</h1>
+                    
+                    <div class="alert alert-info">
+                        <p class="mb-0">This page provides information about the error handling system in Super Dating App.</p>
+                    </div>
+                    
+                    <h2 class="mt-4">Error Types</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Error Code</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Test Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>400</td>
+                                    <td>Bad Request</td>
+                                    <td>The server could not understand the request due to invalid syntax or missing parameters.</td>
+                                    <td><a href="{% url 'core:test_error' '400' %}" class="btn btn-sm btn-outline-primary">Test 400</a></td>
+                                </tr>
+                                <tr>
+                                    <td>403</td>
+                                    <td>Forbidden</td>
+                                    <td>The server understood the request but refuses to authorize it.</td>
+                                    <td><a href="{% url 'core:test_error' '403' %}" class="btn btn-sm btn-outline-primary">Test 403</a></td>
+                                </tr>
+                                <tr>
+                                    <td>404</td>
+                                    <td>Not Found</td>
+                                    <td>The server cannot find the requested resource.</td>
+                                    <td><a href="{% url 'core:test_error' '404' %}" class="btn btn-sm btn-outline-primary">Test 404</a></td>
+                                </tr>
+                                <tr>
+                                    <td>500</td>
+                                    <td>Internal Server Error</td>
+                                    <td>The server has encountered a situation it doesn't know how to handle.</td>
+                                    <td><a href="{% url 'core:test_error' '500' %}" class="btn btn-sm btn-outline-primary">Test 500</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h2 class="mt-4">Error Handling Features</h2>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item">
+                            <strong>Custom Error Pages</strong>: User-friendly error pages with helpful information.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Comprehensive Logging</strong>: All errors are logged with detailed information for debugging.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Exception Middleware</strong>: Global exception handling to ensure consistent error responses.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Admin Notifications</strong>: Critical errors trigger notifications to the admin team.
+                        </li>
+                    </ul>
+                    
+                    <h2 class="mt-4">For Developers</h2>
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Logging Configuration</h5>
+                            <p>The application uses Django's logging system with the following loggers:</p>
+                            <ul>
+                                <li><code>django</code>: General Django logs</li>
+                                <li><code>django.request</code>: HTTP request/response logs</li>
+                                <li><code>django.security</code>: Security-related logs</li>
+                                <li><code>core.middleware</code>: Middleware logs, including exception handling</li>
+                            </ul>
+                            <p>Log files are stored in the <code>logs/</code> directory at the project root.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

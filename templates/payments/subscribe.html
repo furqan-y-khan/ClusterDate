@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscribe to {{ plan.name }} - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .subscribe-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .subscribe-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .subscribe-header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .subscribe-header p {
+        color: #666;
+    }
+    
+    .plan-summary {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .plan-summary h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .plan-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    
+    .plan-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .payment-section {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .payment-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .payment-methods {
+        margin-bottom: 20px;
+    }
+    
+    .payment-method {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+    
+    .payment-method:hover {
+        border-color: #007bff;
+    }
+    
+    .payment-method.selected {
+        border-color: #007bff;
+        background-color: #f0f7ff;
+    }
+    
+    .payment-method-radio {
+        margin-right: 15px;
+    }
+    
+    .payment-method-details {
+        flex-grow: 1;
+    }
+    
+    .payment-method-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .payment-method-info {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .add-payment-method {
+        display: block;
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .add-payment-method:hover {
+        text-decoration: underline;
+    }
+    
+    .card-element {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    
+    .subscribe-button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .subscribe-button:hover {
+        background-color: #0069d9;
+    }
+    
+    .terms-agreement {
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+    }
+    
+    .terms-agreement a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .terms-agreement a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Stripe
+        const stripe = Stripe('{{ stripe_public_key }}');
+        const elements = stripe.elements();
+        
+        // Create card element
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+        
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const errorElement = document.getElementById('card-errors');
+        
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            // Disable the submit button to prevent multiple clicks
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            
+            // Check if using existing payment method
+            const useExistingMethod = document.querySelector('input[name="payment_method"]:checked');
+            
+            if (useExistingMethod) {
+                // Submit the form with existing payment method
+                const hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'payment_method_id');
+                hiddenInput.setAttribute('value', useExistingMethod.value);
+                form.appendChild(hiddenInput);
+                form.submit();
+            } else {
+                // Create a new payment method
+                const result = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        name: '{{ request.user.get_full_name }}',
+                        email: '{{ request.user.email }}'
+                    }
+                });
+                
+                if (result.error) {
+                    // Show error to customer
+                    errorElement.textContent = result.error.message;
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Subscribe Now';
+                } else {
+                    // Send payment method ID to server
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.setAttribute('type', 'hidden');
+                    hiddenInput.setAttribute('name', 'payment_method_id');
+                    hiddenInput.setAttribute('value', result.paymentMethod.id);
+                    form.appendChild(hiddenInput);
+                    form.submit();
+                }
+            }
+        });
+        
+        // Toggle between existing payment methods and new card
+        const existingMethodsRadios = document.querySelectorAll('input[name="payment_method"]');
+        const newCardSection = document.getElementById('new-card-section');
+        
+        existingMethodsRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'new') {
+                    newCardSection.style.display = 'block';
+                } else {
+                    newCardSection.style.display = 'none';
+                }
+            });
+        });
+        
+        // Highlight selected payment method
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Remove selected class from all methods
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                
+                // Add selected class to clicked method
+                this.classList.add('selected');
+                
+                // Toggle new card section
+                if (radio.value === 'new') {
+                    newCardSection.style.display = 'block';
+                } else {
+                    newCardSection.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="subscribe-container">
+    <div class="subscribe-header">
+        <h1>Subscribe to {{ plan.name }}</h1>
+        <p>Unlock premium features and enhance your dating experience</p>
+    </div>
+    
+    <div class="plan-summary">
+        <h2>Plan Summary</h2>
+        <div class="plan-details">
+            <div>
+                <h3>{{ plan.name }}</h3>
+                <p>{{ plan.description }}</p>
+                <ul>
+                    {% for feature_name, feature_value in plan.features.items %}
+                    <li>{{ feature_name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="plan-price">
+                ${{ plan.price }}<span class="plan-interval">/{{ plan.get_interval_display|lower }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <form id="payment-form" method="post">
+        {% csrf_token %}
+        
+        <div class="payment-section">
+            <h2>Payment Method</h2>
+            
+            {% if payment_methods %}
+            <div class="payment-methods">
+                {% for method in payment_methods %}
+                <div class="payment-method {% if method.is_default %}selected{% endif %}">
+                    <input type="radio" name="payment_method" value="{{ method.stripe_payment_method_id }}" 
+                           class="payment-method-radio" id="method-{{ method.id }}"
+                           {% if method.is_default %}checked{% endif %}>
+                    <div class="payment-method-details">
+                        <div class="payment-method-name">{{ method.get_payment_type_display }}</div>
+                        <div class="payment-method-info">
+                            •••• {{ method.last_4 }}
+                            {% if method.expiry_month and method.expiry_year %}
+                            | Expires {{ method.expiry_month }}/{{ method.expiry_year }}
+                            {% endif %}
+                            {% if method.is_default %} (Default){% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="payment-method">
+                    <input type="radio" name="payment_method" value="new" 
+                           class="payment-method-radio" id="method-new">
+                    <div class="payment-method-details">
+                        <div class="payment-method-name">Use a new card</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div id="new-card-section" {% if payment_methods %}style="display: none;"{% endif %}>
+                <div class="form-group">
+                    <label for="card-element">Credit or debit card</label>
+                    <div id="card-element" class="card-element">
+                        <!-- Stripe Card Element will be inserted here -->
+                    </div>
+                    <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                </div>
+                
+                <div class="form-check mt-3">
+                    <input type="checkbox" class="form-check-input" id="save-card" name="save_card" checked>
+                    <label class="form-check-label" for="save-card">
+                        Save this card for future payments
+                    </label>
+                </div>
+            </div>
+            
+            {% if not payment_methods %}
+            <a href="{% url 'payments:add_payment_method' %}" class="add-payment-method">
+                <i class="fas fa-plus-circle"></i> Add a different payment method
+            </a>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="subscribe-button" id="submit-button">Subscribe Now</button>
+        
+        <div class="terms-agreement">
+            By subscribing, you agree to our <a href="{% url 'terms_of_service' %}" target="_blank">Terms of Service</a> 
+            and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>. 
+            Your subscription will automatically renew at the end of each billing period.
+        </div>
+    </form>
+</div>
+{% endblock %} 

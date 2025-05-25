@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "How It Works" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{% trans "How Cultural Dating Works" %}</h1>
+            <p class="lead">{% trans "Find meaningful connections with people who share your cultural heritage" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-lg-5">
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <img src="https://via.placeholder.com/600x400?text=Cultural+Matching" class="img-fluid rounded" alt="Cultural Matching">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">1</span>
+                                </div>
+                                <h2 class="h4 mb-0">{% trans "Create Your Cultural Profile" %}</h2>
+                            </div>
+                            <p>{% trans "Start by building your profile with details about your cultural background, languages spoken, traditions you observe, and what aspects of cultural compatibility matter most to you in a relationship." %}</p>
+                            <p>{% trans "The more specific you are about your cultural identity and preferences, the better matches we can find for you." %}</p>
+                            <a href="{% url 'ethnic:profile_edit' %}" class="btn btn-primary">
+                                <i class="fas fa-user-edit me-2"></i> {% trans "Create Profile" %}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-5">
+                        <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+                            <img src="https://via.placeholder.com/600x400?text=Cultural+Algorithm" class="img-fluid rounded" alt="Cultural Algorithm">
+                        </div>
+                        <div class="col-md-6 order-md-1">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">2</span>
+                                </div>
+                                <h2 class="h4 mb-0">{% trans "Our Cultural Matching Algorithm" %}</h2>
+                            </div>
+                            <p>{% trans "Our proprietary algorithm analyzes multiple dimensions of cultural compatibility:" %}</p>
+                            <ul>
+                                <li>{% trans "Shared cultural background and heritage" %}</li>
+                                <li>{% trans "Common languages and communication styles" %}</li>
+                                <li>{% trans "Similar traditions, celebrations, and customs" %}</li>
+                                <li>{% trans "Compatible values regarding family and relationships" %}</li>
+                                <li>{% trans "Mutual interest in cultural activities and cuisine" %}</li>
+                            </ul>
+                            <a href="{% url 'ethnic:compatibility' %}" class="btn btn-success">
+                                <i class="fas fa-cogs me-2"></i> {% trans "Learn More" %}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <img src="https://via.placeholder.com/600x400?text=Browse+Profiles" class="img-fluid rounded" alt="Browse Profiles">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">3</span>
+                                </div>
+                                <h2 class="h4 mb-0">{% trans "Browse Cultural Matches" %}</h2>
+                            </div>
+                            <p>{% trans "Discover profiles of singles who share your cultural background or who are interested in your heritage. Filter by specific cultural groups, languages spoken, or other preferences important to you." %}</p>
+                            <p>{% trans "Each profile includes cultural information so you can quickly identify potential cultural connections." %}</p>
+                            <a href="{% url 'ethnic:browse' %}" class="btn btn-info">
+                                <i class="fas fa-search me-2"></i> {% trans "Browse Matches" %}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+                            <img src="https://via.placeholder.com/600x400?text=Cultural+Events" class="img-fluid rounded" alt="Cultural Events">
+                        </div>
+                        <div class="col-md-6 order-md-1">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-danger rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">4</span>
+                                </div>
+                                <h2 class="h4 mb-0">{% trans "Attend Cultural Events" %}</h2>
+                            </div>
+                            <p>{% trans "Connect in person at cultural events and gatherings. Our app helps you discover festivals, celebrations, and meetups related to your cultural interests." %}</p>
+                            <p>{% trans "Meeting people in a cultural context provides a natural starting point for connection and conversation." %}</p>
+                            <a href="{% url 'ethnic:events' %}" class="btn btn-danger">
+                                <i class="fas fa-calendar-alt me-2"></i> {% trans "Find Events" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm text-center">
+                <div class="card-body p-5">
+                    <h2 class="h4 mb-3">{% trans "Ready to Find Your Cultural Connection?" %}</h2>
+                    <p class="mb-4">{% trans "Join thousands of singles who are finding meaningful relationships based on shared heritage." %}</p>
+                    <a href="{% url 'ethnic:profile_edit' %}" class="btn btn-lg btn-primary px-5">
+                        <i class="fas fa-heart me-2"></i> {% trans "Get Started Now" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i> {% trans "Back to Home" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

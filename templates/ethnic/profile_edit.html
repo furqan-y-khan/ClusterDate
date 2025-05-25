@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit Cultural Profile" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 mb-3">{% trans "Edit Your Cultural Profile" %}</h1>
+            <p class="lead">{% trans "Tell us about your cultural background and preferences" %}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <h3 class="h5 mb-4">{% trans "Basic Information" %}</h3>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="first_name" class="form-label">{% trans "First Name" %}</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">{% trans "Last Name" %}</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="birth_date" class="form-label">{% trans "Birth Date" %}</label>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">{% trans "Gender" %}</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="">{% trans "Select Gender" %}</option>
+                                <option value="M">{% trans "Male" %}</option>
+                                <option value="F">{% trans "Female" %}</option>
+                                <option value="NB">{% trans "Non-Binary" %}</option>
+                                <option value="O">{% trans "Other" %}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">{% trans "About Me" %}</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="{% trans 'Tell others about yourself...' %}"></textarea>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h3 class="h5 mb-4">{% trans "Cultural Information" %}</h3>
+                        
+                        <div class="mb-3">
+                            <label for="ethnicity" class="form-label">{% trans "Primary Cultural/Ethnic Background" %}</label>
+                            <select class="form-select" id="ethnicity" name="ethnicity">
+                                <option value="">{% trans "Select Background" %}</option>
+                                <option value="african">{% trans "African" %}</option>
+                                <option value="african_american">{% trans "African American" %}</option>
+                                <option value="asian">{% trans "Asian" %}</option>
+                                <option value="caribbean">{% trans "Caribbean" %}</option>
+                                <option value="east_asian">{% trans "East Asian" %}</option>
+                                <option value="european">{% trans "European" %}</option>
+                                <option value="hispanic">{% trans "Hispanic/Latino" %}</option>
+                                <option value="middle_eastern">{% trans "Middle Eastern" %}</option>
+                                <option value="native_american">{% trans "Native American" %}</option>
+                                <option value="pacific_islander">{% trans "Pacific Islander" %}</option>
+                                <option value="south_asian">{% trans "South Asian" %}</option>
+                                <option value="southeast_asian">{% trans "Southeast Asian" %}</option>
+                                <option value="mixed">{% trans "Mixed Heritage" %}</option>
+                                <option value="other">{% trans "Other" %}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cultural_identity" class="form-label">{% trans "Cultural Identity" %}</label>
+                            <input type="text" class="form-control" id="cultural_identity" name="cultural_identity" placeholder="{% trans 'e.g. Italian-American, British-Indian, etc.' %}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="languages" class="form-label">{% trans "Languages Spoken" %}</label>
+                            <input type="text" class="form-control" id="languages" name="languages" placeholder="{% trans 'e.g. English, Spanish, Mandarin' %}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cultural_importance" class="form-label">{% trans "Importance of Cultural Background" %}</label>
+                            <select class="form-select" id="cultural_importance" name="cultural_importance">
+                                <option value="">{% trans "Select Importance" %}</option>
+                                <option value="very_important">{% trans "Very Important" %}</option>
+                                <option value="important">{% trans "Important" %}</option>
+                                <option value="somewhat_important">{% trans "Somewhat Important" %}</option>
+                                <option value="not_important">{% trans "Not Important" %}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cultural_traditions" class="form-label">{% trans "Cultural Traditions/Customs I Observe" %}</label>
+                            <textarea class="form-control" id="cultural_traditions" name="cultural_traditions" rows="3" placeholder="{% trans 'Describe cultural traditions that are important to you...' %}"></textarea>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h3 class="h5 mb-4">{% trans "Photos" %}</h3>
+                        
+                        <div class="mb-3">
+                            <label for="profile_photo" class="form-label">{% trans "Profile Photo" %}</label>
+                            <input class="form-control" type="file" id="profile_photo" name="profile_photo">
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h3 class="h5 mb-4">{% trans "Preferences" %}</h3>
+                        
+                        <div class="mb-3">
+                            <label for="preferred_ethnicity" class="form-label">{% trans "Preferred Cultural/Ethnic Background" %}</label>
+                            <select class="form-select" id="preferred_ethnicity" name="preferred_ethnicity">
+                                <option value="any" selected>{% trans "Any Background" %}</option>
+                                <option value="same">{% trans "Same as Mine" %}</option>
+                                <option value="specific">{% trans "Specific Background(s)" %}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="relationship_goals" class="form-label">{% trans "Relationship Goals" %}</label>
+                            <select class="form-select" id="relationship_goals" name="relationship_goals">
+                                <option value="">{% trans "Select Goal" %}</option>
+                                <option value="dating">{% trans "Dating" %}</option>
+                                <option value="long_term">{% trans "Long-term Relationship" %}</option>
+                                <option value="marriage">{% trans "Marriage" %}</option>
+                                <option value="friendship">{% trans "Friendship" %}</option>
+                                <option value="not_sure">{% trans "Not Sure Yet" %}</option>
+                            </select>
+                        </div>
+                        
+                        <div class="text-end mt-4">
+                            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-secondary me-2">{% trans "Cancel" %}</a>
+                            <button type="submit" class="btn btn-primary">{% trans "Save Profile" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

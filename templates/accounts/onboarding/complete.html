@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile Complete - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .onboarding-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .onboarding-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .onboarding-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .onboarding-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .progress-container {
+        margin-bottom: 30px;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background-color: #28a745;
+        width: 100%; /* (step / total_steps) * 100 */
+    }
+    
+    .step-indicators {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 20%;
+    }
+    
+    .step-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    
+    .step-dot.active {
+        background-color: #007bff;
+    }
+    
+    .step-dot.completed {
+        background-color: #28a745;
+    }
+    
+    .step-dot.completed::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+    }
+    
+    .step-label {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+    }
+    
+    .onboarding-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .completion-message {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .completion-message h2 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: #28a745;
+    }
+    
+    .completion-message p {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    .completion-icon {
+        font-size: 4rem;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+    
+    .profile-summary {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .profile-summary h3 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .profile-details {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .profile-image {
+        width: 30%;
+        padding-right: 20px;
+    }
+    
+    .profile-image img {
+        width: 100%;
+        border-radius: 10px;
+    }
+    
+    .profile-info {
+        width: 70%;
+    }
+    
+    .info-group {
+        margin-bottom: 15px;
+    }
+    
+    .info-label {
+        font-weight: bold;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .info-value {
+        color: #333;
+    }
+    
+    .completion-percentage {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .completion-percentage h3 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .percentage-bar {
+        height: 30px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+    
+    .percentage-fill {
+        height: 100%;
+        background-color: #28a745;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .next-steps {
+        margin-bottom: 30px;
+    }
+    
+    .next-steps h3 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+    }
+    
+    .next-steps-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .next-steps-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .next-steps-list li:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .step-text h4 {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .step-text p {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0;
+    }
+    
+    .finish-button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .finish-button:hover {
+        background-color: #218838;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="onboarding-header">
+        <h1>Profile Setup Complete!</h1>
+        <p>Your dating profile is ready. Let's start meeting people!</p>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <div class="step-indicators">
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Get Started</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Photos</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Interests</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Preferences</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="onboarding-content">
+        <div class="completion-message">
+            <i class="fas fa-check-circle completion-icon"></i>
+            <h2>Congratulations!</h2>
+            <p>You've successfully set up your dating profile.</p>
+        </div>
+        
+        <div class="completion-percentage">
+            <h3>Profile Completion</h3>
+            <div class="percentage-bar">
+                <div class="percentage-fill" style="width: {{ completion_percentage }}%;">
+                    {{ completion_percentage }}%
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-summary">
+            <h3>Your Profile Summary</h3>
+            <div class="profile-details">
+                <div class="profile-image">
+                    {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="{{ user.username }}'s profile picture">
+                    {% else %}
+                    <div style="background-color: #e9ecef; height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user" style="font-size: 3rem; color: #adb5bd;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <div class="info-group">
+                        <div class="info-label">Name</div>
+                        <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">{{ profile.age }}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">{{ profile.get_gender_display }}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Location</div>
+                        <div class="info-value">{{ profile.location }}</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">Interests</div>
+                        <div class="info-value">
+                            {% for interest in profile.interests.all|slice:":5" %}
+                            <span style="display: inline-block; background-color: #e6f3ff; color: #007bff; padding: 3px 8px; border-radius: 15px; margin-right: 5px; margin-bottom: 5px; font-size: 0.9rem;">{{ interest.name }}</span>
+                            {% endfor %}
+                            {% if profile.interests.count > 5 %}
+                            <span>and {{ profile.interests.count|add:"-5" }} more</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="next-steps">
+            <h3>What's Next?</h3>
+            <ul class="next-steps-list">
+                <li>
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <h4>Explore Matches</h4>
+                        <p>Check out your suggested matches based on your preferences and interests.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <h4>Send Likes</h4>
+                        <p>Like profiles that interest you to show them you're interested.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <h4>Start Conversations</h4>
+                        <p>When you match with someone, start a conversation to get to know them better.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="finish-button">Start Exploring</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

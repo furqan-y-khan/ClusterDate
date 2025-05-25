@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Account - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-account-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .delete-account-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .delete-account-header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .delete-account-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .warning-box {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: #721c24;
+    }
+    
+    .warning-box h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #721c24;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    
+    .confirmation-text {
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 5px;
+    }
+    
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+    
+    .delete-button {
+        padding: 12px 25px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .delete-button:hover {
+        background-color: #c82333;
+    }
+    
+    .cancel-button {
+        padding: 12px 25px;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .cancel-button:hover {
+        background-color: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-account-container">
+    <div class="delete-account-header">
+        <h1>Delete Your Account</h1>
+        <p>We're sorry to see you considering leaving. Please read the information below carefully.</p>
+    </div>
+    
+    <div class="delete-account-content">
+        <div class="warning-box">
+            <h3>Warning: This action cannot be undone</h3>
+            <p>Deleting your account will:</p>
+            <ul>
+                <li>Permanently remove your profile from our platform</li>
+                <li>Delete all your matches and conversations</li>
+                <li>Cancel any active subscriptions</li>
+                <li>Remove all your personal data from our systems</li>
+            </ul>
+            <p>This process is irreversible. If you want to use our service again, you'll need to create a new account.</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="password">Enter your password to confirm:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmation">Type "DELETE MY ACCOUNT" to confirm:</label>
+                <p class="confirmation-text">DELETE MY ACCOUNT</p>
+                <input type="text" id="confirmation" name="confirmation" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reason">Please tell us why you're leaving (optional):</label>
+                <select id="reason" name="reason" class="form-control">
+                    <option value="">Select a reason</option>
+                    <option value="found_match">I found a match</option>
+                    <option value="not_useful">Not finding the app useful</option>
+                    <option value="too_expensive">Subscription is too expensive</option>
+                    <option value="privacy_concerns">Privacy concerns</option>
+                    <option value="harassment">Experienced harassment</option>
+                    <option value="technical_issues">Technical issues</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="other_reason_container" style="display: none;">
+                <label for="other_reason">Please specify:</label>
+                <textarea id="other_reason" name="other_reason" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="button-group">
+                <a href="{% url 'accounts:profile_edit' %}" class="cancel-button">Cancel</a>
+                <button type="submit" class="delete-button">Delete My Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const reasonSelect = document.getElementById('reason');
+        const otherReasonContainer = document.getElementById('other_reason_container');
+        
+        reasonSelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherReasonContainer.style.display = 'block';
+            } else {
+                otherReasonContainer.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %} 

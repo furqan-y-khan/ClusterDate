@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Billing Addresses - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="section-title">Billing Addresses</h2>
+            <p class="text-muted">Manage your billing addresses for subscription invoices</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'payments:add_billing_address' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i> Add New Billing Address
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if billing_addresses %}
+                    <div class="row">
+                        {% for address in billing_addresses %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 {% if address.is_default %}border-primary{% endif %}">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">{{ address.name }}</h5>
+                                    {% if address.is_default %}
+                                    <span class="badge bg-primary">Default</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1">{{ address.street_address }}</p>
+                                    {% if address.street_address_line2 %}
+                                    <p class="mb-1">{{ address.street_address_line2 }}</p>
+                                    {% endif %}
+                                    <p class="mb-1">{{ address.city }}, {{ address.state }} {{ address.postal_code }}</p>
+                                    <p>{{ address.country.name }}</p>
+                                    
+                                    <div class="mt-3">
+                                        <a href="{% url 'payments:edit_billing_address' address.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </a>
+                                        
+                                        {% if not address.is_default %}
+                                        <form method="post" action="{% url 'payments:set_default_billing_address' address.id %}" class="d-inline ms-1">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-check-circle me-1"></i> Set Default
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="post" action="{% url 'payments:delete_billing_address' address.id %}" class="d-inline ms-1">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash me-1"></i> Delete
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+                        <h4>No Billing Addresses</h4>
+                        <p class="text-muted">You haven't added any billing addresses yet.</p>
+                        <a href="{% url 'payments:add_billing_address' %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-plus-circle me-2"></i> Add Billing Address
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

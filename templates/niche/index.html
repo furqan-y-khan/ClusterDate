@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Niche Dating - Find Your Special Someone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron bg-gradient-primary text-white">
+        <h1 class="display-4">Welcome to Niche Dating</h1>
+        <p class="lead">Connect with singles who share your unique interests, passions, and lifestyle.</p>
+        {% if not request.user.is_authenticated %}
+        <hr class="my-4 bg-light">
+        <p>Join our specialized communities today to find your perfect match!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'niche:register' %}" role="button">Sign Up Now</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'niche:login' %}" role="button">Login</a>
+        {% else %}
+        <hr class="my-4 bg-light">
+        <p>Browse profiles, set your preferences, and connect with like-minded individuals!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'niche:browse' %}" role="button">Browse Profiles</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'niche:profile_edit' %}" role="button">Edit Profile</a>
+        {% endif %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Featured Niche Communities</h2>
+            <p class="text-center">Find your tribe based on shared interests, lifestyles, and passions</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">Book Lovers</h4>
+                    <p class="card-text">Connect with singles who share your passion for literature and reading.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'book-lovers' %}" class="btn btn-primary btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-hiking fa-3x text-success mb-3"></i>
+                    <h4 class="card-title">Outdoor Enthusiasts</h4>
+                    <p class="card-text">Meet active singles who enjoy hiking, camping, and outdoor adventures.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'outdoor' %}" class="btn btn-success btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-laptop-code fa-3x text-danger mb-3"></i>
+                    <h4 class="card-title">Tech & Coding</h4>
+                    <p class="card-text">Connect with tech-savvy singles who share your passion for technology.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'tech' %}" class="btn btn-danger btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-palette fa-3x text-info mb-3"></i>
+                    <h4 class="card-title">Art & Creativity</h4>
+                    <p class="card-text">Find creative souls who share your artistic passions and interests.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'art' %}" class="btn btn-info btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fa-3x text-warning mb-3"></i>
+                    <h4 class="card-title">Foodies</h4>
+                    <p class="card-text">Connect with singles who share your culinary interests and food adventures.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'food' %}" class="btn btn-warning btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-gamepad fa-3x text-purple mb-3"></i>
+                    <h4 class="card-title">Gamers</h4>
+                    <p class="card-text">Meet singles who share your passion for video games and gaming culture.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'niche:community' 'gaming' %}" class="btn btn-dark btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3>Don't see your interest?</h3>
+                            <p class="lead mb-0">We have dozens more niche communities to explore, or you can suggest a new one!</p>
+                        </div>
+                        <div class="col-md-4 text-md-right mt-3 mt-md-0">
+                            <a href="{% url 'niche:all_communities' %}" class="btn btn-primary mr-2">View All</a>
+                            <a href="{% url 'niche:suggest' %}" class="btn btn-outline-primary">Suggest</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 mb-5">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center py-5">
+                    <h3 class="mb-3">Find Your Perfect Match Based on Shared Passions</h3>
+                    <p class="lead">Join thousands of singles who found love through shared interests and hobbies.</p>
+                    <a href="{% url 'niche:register' %}" class="btn btn-light btn-lg mt-3">Get Started Today</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

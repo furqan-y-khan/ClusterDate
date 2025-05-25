@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Photos - Profile Onboarding{% endblock %}
+
+{% block extra_css %}
+<style>
+    .onboarding-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .onboarding-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .onboarding-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .onboarding-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .progress-container {
+        margin-bottom: 30px;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background-color: #007bff;
+        width: 40%; /* (step / total_steps) * 100 */
+    }
+    
+    .step-indicators {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 20%;
+    }
+    
+    .step-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    
+    .step-dot.active {
+        background-color: #007bff;
+    }
+    
+    .step-dot.completed {
+        background-color: #28a745;
+    }
+    
+    .step-dot.completed::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+    }
+    
+    .step-label {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+    }
+    
+    .onboarding-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .form-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .photo-tips {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+    
+    .photo-tips h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .photo-tips ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+    
+    .photo-tips li {
+        margin-bottom: 5px;
+        color: #555;
+    }
+    
+    .photo-upload-section {
+        margin-bottom: 25px;
+    }
+    
+    .photo-upload-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .upload-box {
+        height: 200px;
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+    
+    .upload-box:hover {
+        border-color: #007bff;
+        background-color: #e9f4ff;
+    }
+    
+    .upload-box.main {
+        grid-column: span 2;
+        grid-row: span 2;
+        height: auto;
+        border-color: #007bff;
+    }
+    
+    .upload-box.main .upload-icon {
+        font-size: 3rem;
+    }
+    
+    .upload-box.has-image {
+        border-style: solid;
+        border-color: #28a745;
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    
+    .upload-text {
+        font-size: 0.9rem;
+        color: #495057;
+        text-align: center;
+        padding: 0 10px;
+    }
+    
+    .upload-text.main {
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .preview-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .remove-photo {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 25px;
+        height: 25px;
+        background-color: rgba(220, 53, 69, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+        font-size: 12px;
+    }
+    
+    .remove-photo:hover {
+        background-color: #dc3545;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+    
+    .btn-back {
+        padding: 12px 25px;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-back:hover {
+        background-color: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-next {
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-next:hover {
+        background-color: #0069d9;
+    }
+    
+    .required-field::after {
+        content: "*";
+        color: #dc3545;
+        margin-left: 4px;
+    }
+    
+    .field-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="onboarding-header">
+        <h1>Upload Your Photos</h1>
+        <p>Add photos to your profile to increase your chances of finding matches.</p>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ step|floatformat:0 }}%;"></div>
+        </div>
+        <div class="step-indicators">
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Get Started</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-label">Photos</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-label">Interests</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-label">Preferences</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="onboarding-content">
+        <h2 class="form-section-title">Show your best self</h2>
+        
+        <div class="photo-tips">
+            <h3>Photo Tips:</h3>
+            <ul>
+                <li>Your first photo should clearly show your face - it's your first impression!</li>
+                <li>Add a variety of photos: close-up portraits, full-body shots, and photos of you doing activities you enjoy.</li>
+                <li>High-quality, well-lit photos get more attention.</li>
+                <li>Authentic photos showing the real you will lead to better matches.</li>
+            </ul>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="photo-upload-section">
+                <div class="form-group">
+                    <label for="profile_picture" class="required-field">Main Profile Photo</label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;" required>
+                    
+                    <div class="upload-box main" onclick="document.getElementById('profile_picture').click();" id="main-photo-box">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile picture" class="preview-image" id="main-preview">
+                            <button type="button" class="remove-photo" onclick="removeMainPhoto(event)">×</button>
+                        {% else %}
+                            <i class="fas fa-camera upload-icon"></i>
+                            <p class="upload-text main">Click to upload your main photo</p>
+                            <p class="upload-text">(This will be seen first by others)</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <p class="field-hint">This photo will be your primary profile picture. Choose a photo where your face is clearly visible.</p>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{% url 'accounts:onboarding_basics' %}" class="btn-back">Back</a>
+                <button type="submit" class="btn-next">Next: Add Interests</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profilePictureInput = document.getElementById('profile_picture');
+        const mainPhotoBox = document.getElementById('main-photo-box');
+        
+        // Preview main profile picture
+        profilePictureInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Check if preview already exists
+                    let preview = document.getElementById('main-preview');
+                    if (!preview) {
+                        // If not, create it
+                        preview = document.createElement('img');
+                        preview.id = 'main-preview';
+                        preview.className = 'preview-image';
+                        
+                        // Create remove button
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'remove-photo';
+                        removeBtn.textContent = '×';
+                        removeBtn.onclick = removeMainPhoto;
+                        
+                        // Clear the upload box
+                        mainPhotoBox.innerHTML = '';
+                        mainPhotoBox.appendChild(preview);
+                        mainPhotoBox.appendChild(removeBtn);
+                    }
+                    
+                    // Update preview image and add has-image class
+                    preview.src = e.target.result;
+                    preview.alt = 'Profile picture';
+                    mainPhotoBox.classList.add('has-image');
+                    
+                    // Remove the upload icon and text
+                    const icon = mainPhotoBox.querySelector('.upload-icon');
+                    const text = mainPhotoBox.querySelectorAll('.upload-text');
+                    if (icon) icon.remove();
+                    text.forEach(t => t.remove());
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+    
+    // Function to remove main photo
+    function removeMainPhoto(event) {
+        event.stopPropagation();
+        
+        const mainPhotoBox = document.getElementById('main-photo-box');
+        const profilePictureInput = document.getElementById('profile_picture');
+        
+        // Clear the file input
+        profilePictureInput.value = '';
+        
+        // Remove preview and reset upload box
+        mainPhotoBox.innerHTML = '';
+        mainPhotoBox.classList.remove('has-image');
+        
+        // Add back the upload icon and text
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-camera upload-icon';
+        
+        const text1 = document.createElement('p');
+        text1.className = 'upload-text main';
+        text1.textContent = 'Click to upload your main photo';
+        
+        const text2 = document.createElement('p');
+        text2.className = 'upload-text';
+        text2.textContent = '(This will be seen first by others)';
+        
+        mainPhotoBox.appendChild(icon);
+        mainPhotoBox.appendChild(text1);
+        mainPhotoBox.appendChild(text2);
+    }
+</script>
+{% endblock %} 

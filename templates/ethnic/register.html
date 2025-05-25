@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Register for Cultural Dating" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h2 class="h4 mb-0">{% trans "Create Your Cultural Dating Account" %}</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-globe-americas fa-3x text-success mb-3"></i>
+                        <p class="lead">{% trans "Join our community of culturally-minded singles" %}</p>
+                    </div>
+                    
+                    <form method="post" action="{% url 'accounts:register' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="referrer" value="ethnic">
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{% trans "Username" %}</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{% trans "Email" %}</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{% trans "Password" %}</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password_confirm" class="form-label">{% trans "Confirm Password" %}</label>
+                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">{% trans "Create Account" %}</button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p>{% trans "Already have an account?" %} <a href="{% url 'ethnic:login' %}">{% trans "Login here" %}</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> {% trans "Back to Cultural Dating" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

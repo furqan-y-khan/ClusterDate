@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notification-card {
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+    
+    .notification-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .notification-header {
+        background-color: #f8f9fa;
+        padding: 10px 15px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .notification-time {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .notification-content {
+        padding: 15px;
+    }
+    
+    .notification-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .notification-avatar-placeholder {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .notification-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .notification-match {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .notification-message {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .notification-like {
+        background-color: #e83e8c;
+        color: white;
+    }
+    
+    .notification-system {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .notification-call {
+        background-color: #fd7e14;
+        color: white;
+    }
+    
+    .notification-unread {
+        border-left: 4px solid #007bff;
+    }
+    
+    .notification-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 15px 15px;
+    }
+    
+    .mark-read-btn {
+        background: none;
+        border: none;
+        color: #007bff;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    
+    .mark-read-btn:hover {
+        text-decoration: underline;
+    }
+    
+    .notification-filters {
+        margin-bottom: 20px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 0;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #dee2e6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Notifications</h1>
+        
+        {% if notifications %}
+        <form action="{% url 'messaging:mark_all_read' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary">Mark All as Read</button>
+        </form>
+        {% endif %}
+    </div>
+    
+    <div class="notification-filters">
+        <div class="btn-group" role="group">
+            <a href="{% url 'messaging:notifications' %}" class="btn btn-outline-primary {% if not filter %}active{% endif %}">All</a>
+            <a href="{% url 'messaging:notifications' %}?filter=unread" class="btn btn-outline-primary {% if filter == 'unread' %}active{% endif %}">Unread</a>
+            <a href="{% url 'messaging:notifications' %}?filter=message" class="btn btn-outline-primary {% if filter == 'message' %}active{% endif %}">Messages</a>
+            <a href="{% url 'messaging:notifications' %}?filter=match" class="btn btn-outline-primary {% if filter == 'match' %}active{% endif %}">Matches</a>
+            <a href="{% url 'messaging:notifications' %}?filter=like" class="btn btn-outline-primary {% if filter == 'like' %}active{% endif %}">Likes</a>
+        </div>
+    </div>
+    
+    {% if notifications %}
+        {% for notification in notifications %}
+            <div class="card notification-card {% if not notification.is_read %}notification-unread{% endif %}">
+                <div class="notification-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="notification-badge notification-{{ notification.notification_type|lower }}">
+                            {{ notification.get_notification_type_display }}
+                        </span>
+                        <span class="notification-time">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+                    {% if not notification.is_read %}
+                        <form action="{% url 'messaging:mark_notification_read' notification.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="mark-read-btn">Mark as read</button>
+                        </form>
+                    {% endif %}
+                </div>
+                
+                <div class="notification-content">
+                    <div class="row">
+                        {% if notification.related_user %}
+                            <div class="col-auto">
+                                {% if notification.related_user.profile.profile_picture %}
+                                    <img src="{{ notification.related_user.profile.profile_picture.url }}" alt="{{ notification.related_user.username }}" class="notification-avatar">
+                                {% else %}
+                                    <div class="notification-avatar-placeholder">
+                                        {{ notification.related_user.username.0|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="col">
+                            <p class="mb-0">{{ notification.content }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-actions">
+                    {% if notification.notification_type == 'MESSAGE' and notification.related_conversation %}
+                        <a href="{% url 'messaging:conversation_detail' notification.related_conversation.id %}" class="btn btn-sm btn-primary">View Conversation</a>
+                    {% elif notification.notification_type == 'MATCH' and notification.related_user %}
+                        <a href="{% url 'accounts:profile_view' notification.related_user.username %}" class="btn btn-sm btn-success">View Profile</a>
+                        <a href="{% url 'messaging:start_conversation' notification.related_user.id %}" class="btn btn-sm btn-primary ml-2">Message</a>
+                    {% elif notification.notification_type == 'LIKE' and notification.related_user %}
+                        <a href="{% url 'accounts:profile_view' notification.related_user.username %}" class="btn btn-sm btn-primary">View Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        
+        {% include 'core/partials/pagination.html' with page_obj=notifications %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-bell-slash"></i>
+            <h3>No Notifications</h3>
+            <p>You don't have any notifications yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %} 

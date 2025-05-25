@@ -1,0 +1,532 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ profile.profile.user.get_full_name|default:profile.profile.user.username }} {% trans "Profile" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+    border: 3px solid #ff6b6b;
+  }
+  
+  .profile-gallery {
+    margin: 20px 0;
+  }
+  
+  .gallery-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+  }
+  
+  .gallery-item {
+    min-width: 200px;
+    height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .gallery-item:hover {
+    transform: scale(1.02);
+  }
+  
+  .profile-info-section {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+  
+  .profile-info-section:last-child {
+    border-bottom: none;
+  }
+  
+  .profile-info-section h4 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+  }
+  
+  .info-label {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .match-score-display {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .match-high {
+    background-color: #d4f7d4;
+    color: #28a745;
+  }
+  
+  .match-medium {
+    background-color: #fff3cd;
+    color: #ffc107;
+  }
+  
+  .match-low {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+  
+  .btn-like, .btn-message {
+    padding: 8px 25px;
+    margin-right: 10px;
+  }
+  
+  .btn-like {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+  }
+  
+  .btn-like:hover {
+    background-color: #ff5252;
+    border-color: #ff5252;
+    color: white;
+  }
+  
+  .btn-unlike {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+  
+  .btn-message {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: white;
+  }
+  
+  .btn-message:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    color: white;
+  }
+  
+  .image-modal-content {
+    width: auto;
+    max-width: 90%;
+    max-height: 80vh;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="profile-container">
+        <div class="profile-header">
+          {% if profile.profile.profile_picture %}
+            <img src="{{ profile.profile.profile_picture.url }}" alt="Profile" class="profile-avatar">
+          {% else %}
+            <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="profile-avatar">
+          {% endif %}
+          
+          <div>
+            <h2>{{ profile.profile.user.get_full_name|default:profile.profile.user.username }}</h2>
+            <p class="text-muted">
+              {% if profile.profile.age %}{{ profile.profile.age }} {% trans "years old" %}{% endif %}
+              {% if profile.profile.location %} • {{ profile.profile.location }}{% endif %}
+            </p>
+            
+            {% if match_score >= 60 %}
+              <div class="match-score-display match-high">
+                <i class="fas fa-star"></i> {% trans "High Match" %} ({{ match_score }}%)
+              </div>
+            {% elif match_score >= 30 %}
+              <div class="match-score-display match-medium">
+                <i class="fas fa-star-half-alt"></i> {% trans "Good Match" %} ({{ match_score }}%)
+              </div>
+            {% else %}
+              <div class="match-score-display match-low">
+                <i class="far fa-star"></i> {% trans "Low Match" %} ({{ match_score }}%)
+              </div>
+            {% endif %}
+            
+            <div class="mt-3">
+              {% if is_matched %}
+                {% if conversation %}
+                  <a href="{% url 'messaging:conversation' conversation.id %}" class="btn btn-message">
+                    <i class="fas fa-comments"></i> {% trans "Message" %}
+                  </a>
+                {% else %}
+                  <button class="btn btn-message" id="start-conversation" data-username="{{ profile.profile.user.username }}">
+                    <i class="fas fa-comments"></i> {% trans "Start Conversation" %}
+                  </button>
+                {% endif %}
+              {% endif %}
+              
+              <button class="btn btn-primary" id="connect-btn" data-username="{{ profile.profile.user.username }}">
+                <i class="fas fa-link"></i> {% trans "Connect" %}
+              </button>
+              
+              {% if is_liked %}
+                <button class="btn btn-unlike" id="unlike-btn" data-username="{{ profile.profile.user.username }}">
+                  <i class="fas fa-heart-broken"></i> {% trans "Unlike" %}
+                </button>
+              {% else %}
+                <button class="btn btn-like" id="like-btn" data-username="{{ profile.profile.user.username }}">
+                  <i class="fas fa-heart"></i> {% trans "Like" %}
+                </button>
+              {% endif %}
+              
+              <a href="{% url 'mainstream:browse_profiles' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Browse" %}
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        {% if profile.photo_1 or profile.photo_2 or profile.photo_3 or profile.photo_4 %}
+          <div class="profile-gallery">
+            <h4>{% trans "Photos" %}</h4>
+            <div class="gallery-container">
+              {% if profile.photo_1 %}
+                <img src="{{ profile.photo_1.url }}" class="gallery-item" data-bs-toggle="modal" data-bs-target="#imageModal" data-src="{{ profile.photo_1.url }}">
+              {% endif %}
+              
+              {% if profile.photo_2 %}
+                <img src="{{ profile.photo_2.url }}" class="gallery-item" data-bs-toggle="modal" data-bs-target="#imageModal" data-src="{{ profile.photo_2.url }}">
+              {% endif %}
+              
+              {% if profile.photo_3 %}
+                <img src="{{ profile.photo_3.url }}" class="gallery-item" data-bs-toggle="modal" data-bs-target="#imageModal" data-src="{{ profile.photo_3.url }}">
+              {% endif %}
+              
+              {% if profile.photo_4 %}
+                <img src="{{ profile.photo_4.url }}" class="gallery-item" data-bs-toggle="modal" data-bs-target="#imageModal" data-src="{{ profile.photo_4.url }}">
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+        
+        <div class="profile-info-section">
+          <h4>{% trans "About Me" %}</h4>
+          <p>{{ profile.profile.bio|linebreaks|default:"No bio provided." }}</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Relationship Status:" %}</span> 
+                {{ profile.get_relationship_status_display|default:"Not specified" }}</p>
+              <p><span class="info-label">{% trans "Looking For:" %}</span> 
+                {{ profile.get_looking_for_display|default:"Not specified" }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Education:" %}</span> 
+                {{ profile.get_education_level_display|default:"Not specified" }}</p>
+              <p><span class="info-label">{% trans "Occupation:" %}</span> 
+                {{ profile.occupation|default:"Not specified" }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "Lifestyle" %}</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Have Children:" %}</span> 
+                {% if profile.has_children == True %}{% trans "Yes" %}
+                {% elif profile.has_children == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+              <p><span class="info-label">{% trans "Want Children:" %}</span> 
+                {% if profile.wants_children == True %}{% trans "Yes" %}
+                {% elif profile.wants_children == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Smoker:" %}</span> 
+                {% if profile.smoker == True %}{% trans "Yes" %}
+                {% elif profile.smoker == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+              <p><span class="info-label">{% trans "Drinker:" %}</span> 
+                {% if profile.drinker == True %}{% trans "Yes" %}
+                {% elif profile.drinker == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "Interests" %}</h4>
+          {% if profile.profile.interests.all %}
+            <div class="d-flex flex-wrap">
+              {% for interest in profile.profile.interests.all %}
+                <span class="badge bg-light text-dark p-2 m-1">{{ interest.name }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>{% trans "No interests listed." %}</p>
+          {% endif %}
+        </div>
+        
+        <div class="text-center mt-4">
+          <a href="{% url 'core:report_profile' profile.profile.user.username %}" class="text-muted">
+            <i class="fas fa-flag"></i> {% trans "Report Profile" %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body text-center p-0">
+        <img src="" id="modalImage" class="img-fluid image-modal-content">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Add CSRF token to all AJAX requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Handle image modal
+    $('.gallery-item').click(function() {
+      const imgSrc = $(this).data('src');
+      $('#modalImage').attr('src', imgSrc);
+    });
+    
+    // Connect button
+    $('#connect-btn').click(function() {
+      const username = $(this).data('username');
+      const btn = $(this);
+      
+      $.ajax({
+        url: `/mainstream/profile/${username}/like/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'match') {
+            // Show match notification
+            toastr.success(response.message);
+            
+            // Change button to connected
+            btn.removeClass('btn-primary').addClass('btn-success');
+            btn.html('<i class="fas fa-check"></i> {% trans "Connected" %}');
+            
+            // Change like button to unlike if it exists
+            if ($('#like-btn').length) {
+              $('#like-btn').removeClass('btn-like').addClass('btn-unlike');
+              $('#like-btn').html('<i class="fas fa-heart-broken"></i> {% trans "Unlike" %}');
+              $('#like-btn').attr('id', 'unlike-btn');
+            }
+            
+            // Add message button if it doesn't exist
+            if ($('#start-conversation').length === 0 && $('.btn-message').length === 0) {
+              const msgBtn = $('<button class="btn btn-message" id="start-conversation" data-username="' + username + '">' +
+                               '<i class="fas fa-comments"></i> {% trans "Start Conversation" %}</button>');
+              btn.before(msgBtn);
+              
+              // Bind the click event to the new button
+              $('#start-conversation').click(startConversationHandler);
+            }
+            
+            // Refresh the page to show the match interface
+            setTimeout(function() {
+              location.reload();
+            }, 1500);
+          } else if (response.status === 'liked') {
+            toastr.info(response.message);
+            
+            // Change button style
+            btn.removeClass('btn-primary').addClass('btn-success');
+            btn.html('<i class="fas fa-check"></i> {% trans "Request Sent" %}');
+            
+            // Change like button to unlike if it exists
+            if ($('#like-btn').length) {
+              $('#like-btn').removeClass('btn-like').addClass('btn-unlike');
+              $('#like-btn').html('<i class="fas fa-heart-broken"></i> {% trans "Unlike" %}');
+              $('#like-btn').attr('id', 'unlike-btn');
+            }
+          }
+        },
+        error: function() {
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+    
+    // Like profile
+    $('#like-btn').click(function() {
+      const username = $(this).data('username');
+      const btn = $(this);
+      
+      $.ajax({
+        url: `/mainstream/profile/${username}/like/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'match') {
+            // Show match notification
+            toastr.success(response.message);
+            
+            // Change button to unlike
+            btn.removeClass('btn-like').addClass('btn-unlike');
+            btn.html('<i class="fas fa-heart-broken"></i> {% trans "Unlike" %}');
+            btn.attr('id', 'unlike-btn');
+            
+            // Change connect button if it exists
+            $('#connect-btn').removeClass('btn-primary').addClass('btn-success');
+            $('#connect-btn').html('<i class="fas fa-check"></i> {% trans "Connected" %}');
+            
+            // Add message button if it doesn't exist
+            if ($('#start-conversation').length === 0 && $('.btn-message').length === 0) {
+              const msgBtn = $('<button class="btn btn-message" id="start-conversation" data-username="' + username + '">' +
+                               '<i class="fas fa-comments"></i> {% trans "Start Conversation" %}</button>');
+              btn.before(msgBtn);
+              
+              // Bind the click event to the new button
+              $('#start-conversation').click(startConversationHandler);
+            }
+            
+            // Refresh the page to show the match interface
+            setTimeout(function() {
+              location.reload();
+            }, 1500);
+          } else if (response.status === 'liked') {
+            toastr.info(response.message);
+            
+            // Change button to unlike
+            btn.removeClass('btn-like').addClass('btn-unlike');
+            btn.html('<i class="fas fa-heart-broken"></i> {% trans "Unlike" %}');
+            btn.attr('id', 'unlike-btn');
+            
+            // Change connect button if it exists
+            $('#connect-btn').removeClass('btn-primary').addClass('btn-success');
+            $('#connect-btn').html('<i class="fas fa-check"></i> {% trans "Request Sent" %}');
+          }
+        },
+        error: function() {
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+    
+    // Unlike profile
+    $('#unlike-btn').click(function() {
+      const username = $(this).data('username');
+      const btn = $(this);
+      
+      $.ajax({
+        url: `/mainstream/profile/${username}/unlike/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'unliked') {
+            toastr.info(response.message);
+            
+            // Change button to like
+            btn.removeClass('btn-unlike').addClass('btn-like');
+            btn.html('<i class="fas fa-heart"></i> {% trans "Like" %}');
+            btn.attr('id', 'like-btn');
+            
+            // Reset connect button
+            $('#connect-btn').removeClass('btn-success').addClass('btn-primary');
+            $('#connect-btn').html('<i class="fas fa-link"></i> {% trans "Connect" %}');
+            
+            // Remove message button as no longer matched
+            $('#start-conversation, .btn-message').remove();
+            
+            // Refresh the page to update the match interface
+            setTimeout(function() {
+              location.reload();
+            }, 1500);
+          }
+        },
+        error: function() {
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+    
+    // Start conversation handler function
+    function startConversationHandler() {
+      const username = $(this).data('username');
+      
+      $.ajax({
+        url: `/messaging/start/${username}/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.conversation_id) {
+            window.location.href = `/messaging/conversation/${response.conversation_id}/`;
+          } else {
+            toastr.error('{% trans "Could not start conversation" %}');
+          }
+        },
+        error: function() {
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    }
+    
+    // Bind the handler to the start conversation button
+    $('#start-conversation').click(startConversationHandler);
+  });
+</script>
+{% endblock %} 

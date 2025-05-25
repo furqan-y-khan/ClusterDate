@@ -1,0 +1,86 @@
+<div class="card call-card">
+    <div class="call-header">
+        {% if is_outgoing %}
+            {% if call.receiver.profile.profile_picture %}
+                <img src="{{ call.receiver.profile.profile_picture.url }}" alt="{{ call.receiver.username }}" class="call-avatar">
+            {% else %}
+                <div class="call-avatar-placeholder">
+                    {{ call.receiver.username.0|upper }}
+                </div>
+            {% endif %}
+            <div class="call-info">
+                <div class="call-name">{{ call.receiver.username }}</div>
+                <div class="call-time">
+                    <i class="fas fa-arrow-up text-primary"></i> {{ call.started_at|date:"M d, Y" }} at {{ call.started_at|time:"g:i A" }}
+                </div>
+            </div>
+        {% else %}
+            {% if call.caller.profile.profile_picture %}
+                <img src="{{ call.caller.profile.profile_picture.url }}" alt="{{ call.caller.username }}" class="call-avatar">
+            {% else %}
+                <div class="call-avatar-placeholder">
+                    {{ call.caller.username.0|upper }}
+                </div>
+            {% endif %}
+            <div class="call-info">
+                <div class="call-name">{{ call.caller.username }}</div>
+                <div class="call-time">
+                    <i class="fas fa-arrow-down text-success"></i> {{ call.started_at|date:"M d, Y" }} at {{ call.started_at|time:"g:i A" }}
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="call-type-icon">
+            {% if call.call_type == 'VIDEO' %}
+                <i class="fas fa-video"></i>
+            {% else %}
+                <i class="fas fa-phone-alt"></i>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="call-body">
+        <div class="call-status status-{{ call.status|lower }}">
+            {{ call.status|title }}
+        </div>
+        
+        {% if call.status == 'COMPLETED' %}
+            <div class="call-duration">
+                <i class="far fa-clock"></i> 
+                {% if call.duration < 60 %}
+                    {{ call.duration }} seconds
+                {% else %}
+                    {% with minutes=call.duration|divisibleby:60 seconds=call.duration|modulo:60 %}
+                        {{ minutes }} min{% if minutes != 1 %}s{% endif %} {{ seconds }} sec{% if seconds != 1 %}s{% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div class="call-actions">
+            {% if is_outgoing %}
+                <form action="{% url 'video_call:initiate_call' call.receiver.username %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="call_type" value="{{ call.call_type }}">
+                    <button type="submit" class="call-btn call-again-btn">
+                        <i class="fas fa-phone-alt"></i> Call Again
+                    </button>
+                </form>
+            {% else %}
+                <form action="{% url 'video_call:initiate_call' call.caller.username %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="call_type" value="{{ call.call_type }}">
+                    <button type="submit" class="call-btn call-again-btn">
+                        <i class="fas fa-phone-alt"></i> Call Back
+                    </button>
+                </form>
+            {% endif %}
+            
+            {% if call.status == 'COMPLETED' %}
+                <a href="{% url 'video_call:call_feedback' call.session_id %}" class="call-btn feedback-btn">
+                    <i class="fas fa-star"></i> Feedback
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div> 

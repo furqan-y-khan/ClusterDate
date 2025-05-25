@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscription Plans - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="section-title text-center mb-4">Choose Your Membership Plan</h2>
+        <p class="text-center lead">Upgrade your dating experience with premium features and benefits</p>
+    </div>
+</div>
+
+<div class="row">
+    {% if current_subscription %}
+    <div class="col-12 mb-4">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> You currently have an active subscription: <strong>{{ current_subscription.plan.name }}</strong>
+            <a href="{% url 'payments:cancel_subscription' %}" class="btn btn-sm btn-outline-danger ms-3">Cancel Subscription</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% for plan in plans %}
+    <div class="col-md-4 mb-4">
+        <div class="card plan-card h-100 {% if current_subscription and current_subscription.plan.id == plan.id %}border-primary active-plan{% endif %}">
+            <div class="card-header text-center py-3">
+                <h4 class="my-0 fw-bold">{{ plan.name }}</h4>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <h1 class="card-title text-center mb-3">
+                    ${{ plan.price }}<small class="text-muted fw-light">/{{ plan.get_interval_display }}</small>
+                </h1>
+                
+                <p class="card-text mb-4">{{ plan.description }}</p>
+                
+                <ul class="fa-ul mb-4">
+                    {% for feature_key, feature_value in plan.features.items %}
+                    <li class="mb-2">
+                        {% if feature_value %}
+                        <span class="fa-li"><i class="fas fa-check text-success"></i></span>
+                        {% else %}
+                        <span class="fa-li"><i class="fas fa-times text-danger"></i></span>
+                        {% endif %}
+                        {{ feature_key|title }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="mt-auto text-center">
+                    {% if current_subscription and current_subscription.plan.id == plan.id %}
+                    <button class="btn btn-primary btn-lg w-100" disabled>Current Plan</button>
+                    {% else %}
+                    <a href="{% url 'payments:subscribe' plan.id %}" class="btn btn-outline-primary btn-lg w-100">
+                        {% if current_subscription %}
+                        {% if current_subscription.plan.price < plan.price %}
+                        Upgrade
+                        {% else %}
+                        Downgrade
+                        {% endif %}
+                        {% else %}
+                        Subscribe
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i> No subscription plans are currently available.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h4>Membership Benefits</h4>
+                <p>Upgrade your membership to enjoy premium features:</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent">Unlimited messaging with potential matches</li>
+                    <li class="list-group-item bg-transparent">See who liked your profile</li>
+                    <li class="list-group-item bg-transparent">Priority in match suggestions</li>
+                    <li class="list-group-item bg-transparent">Advanced matching algorithms</li>
+                    <li class="list-group-item bg-transparent">Video calling with matches</li>
+                    <li class="list-group-item bg-transparent">Ad-free experience</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .plan-card {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .plan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .active-plan {
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.5);
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid rgba(0,0,0,0.125);
+    }
+    
+    .fa-ul {
+        margin-left: 1.5em;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animations or additional functionality if needed
+    });
+</script>
+{% endblock %} 

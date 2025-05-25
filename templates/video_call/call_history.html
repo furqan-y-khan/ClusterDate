@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Call History - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .call-history-container {
+        margin-top: 30px;
+    }
+    
+    .call-card {
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+    
+    .call-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .call-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .call-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+    
+    .call-avatar-placeholder {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .call-info {
+        flex-grow: 1;
+    }
+    
+    .call-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .call-time {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .call-type-icon {
+        margin-left: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .call-body {
+        padding: 15px;
+    }
+    
+    .call-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .status-completed {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-missed {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-rejected {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .status-requested {
+        background-color: #ffc107;
+        color: black;
+    }
+    
+    .call-duration {
+        margin-bottom: 10px;
+    }
+    
+    .call-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .call-btn {
+        padding: 8px 15px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.3s;
+    }
+    
+    .call-again-btn {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .call-again-btn:hover {
+        background-color: #0069d9;
+    }
+    
+    .feedback-btn {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .feedback-btn:hover {
+        background-color: #5a6268;
+    }
+    
+    .nav-tabs {
+        margin-bottom: 20px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 0;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #dee2e6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Call History</h1>
+    
+    <ul class="nav nav-tabs" id="callHistoryTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-calls-tab" data-bs-toggle="tab" data-bs-target="#all-calls" type="button" role="tab" aria-controls="all-calls" aria-selected="true">All Calls</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="outgoing-calls-tab" data-bs-toggle="tab" data-bs-target="#outgoing-calls" type="button" role="tab" aria-controls="outgoing-calls" aria-selected="false">Outgoing</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="incoming-calls-tab" data-bs-toggle="tab" data-bs-target="#incoming-calls" type="button" role="tab" aria-controls="incoming-calls" aria-selected="false">Incoming</button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="callHistoryTabContent">
+        <!-- All Calls Tab -->
+        <div class="tab-pane fade show active" id="all-calls" role="tabpanel" aria-labelledby="all-calls-tab">
+            <div class="call-history-container">
+                {% if outgoing_calls or incoming_calls %}
+                    {% for call in outgoing_calls|slice:":5" %}
+                        {% include 'video_call/partials/call_card.html' with call=call is_outgoing=True %}
+                    {% endfor %}
+                    
+                    {% for call in incoming_calls|slice:":5" %}
+                        {% include 'video_call/partials/call_card.html' with call=call is_outgoing=False %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-phone-slash"></i>
+                        <h3>No Call History</h3>
+                        <p>You haven't made or received any calls yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Outgoing Calls Tab -->
+        <div class="tab-pane fade" id="outgoing-calls" role="tabpanel" aria-labelledby="outgoing-calls-tab">
+            <div class="call-history-container">
+                {% if outgoing_calls %}
+                    {% for call in outgoing_calls %}
+                        {% include 'video_call/partials/call_card.html' with call=call is_outgoing=True %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-phone-alt"></i>
+                        <h3>No Outgoing Calls</h3>
+                        <p>You haven't made any calls yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Incoming Calls Tab -->
+        <div class="tab-pane fade" id="incoming-calls" role="tabpanel" aria-labelledby="incoming-calls-tab">
+            <div class="call-history-container">
+                {% if incoming_calls %}
+                    {% for call in incoming_calls %}
+                        {% include 'video_call/partials/call_card.html' with call=call is_outgoing=False %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-phone-volume"></i>
+                        <h3>No Incoming Calls</h3>
+                        <p>You haven't received any calls yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %} 

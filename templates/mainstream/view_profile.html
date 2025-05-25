@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Your Profile" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+    border: 3px solid #ff6b6b;
+  }
+  
+  .profile-info-section {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+  
+  .profile-info-section:last-child {
+    border-bottom: none;
+  }
+  
+  .profile-info-section h4 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+  }
+  
+  .info-label {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .photo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .profile-photo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid #eee;
+  }
+  
+  .btn-edit {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+  }
+  
+  .btn-edit:hover {
+    background-color: #ff5252;
+    border-color: #ff5252;
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="profile-container">
+        <div class="profile-header">
+          {% if profile.profile.profile_picture %}
+            <img src="{{ profile.profile.profile_picture.url }}" alt="Profile" class="profile-avatar">
+          {% else %}
+            <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="profile-avatar">
+          {% endif %}
+          
+          <div>
+            <h2>{{ profile.profile.user.get_full_name|default:profile.profile.user.username }}</h2>
+            <p class="text-muted">
+              {% if profile.profile.age %}{{ profile.profile.age }} {% trans "years old" %}{% endif %}
+              {% if profile.profile.location %} • {{ profile.profile.location }}{% endif %}
+            </p>
+            <a href="{% url 'mainstream:create_profile' %}" class="btn btn-edit mt-2">
+              <i class="fas fa-edit"></i> {% trans "Edit Profile" %}
+            </a>
+          </div>
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "About Me" %}</h4>
+          <p>{{ profile.profile.bio|linebreaks|default:"No bio provided yet." }}</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Relationship Status:" %}</span> 
+                {{ profile.get_relationship_status_display|default:"Not specified" }}</p>
+              <p><span class="info-label">{% trans "Looking For:" %}</span> 
+                {{ profile.get_looking_for_display|default:"Not specified" }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Education:" %}</span> 
+                {{ profile.get_education_level_display|default:"Not specified" }}</p>
+              <p><span class="info-label">{% trans "Occupation:" %}</span> 
+                {{ profile.occupation|default:"Not specified" }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "Lifestyle" %}</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Have Children:" %}</span> 
+                {% if profile.has_children == True %}{% trans "Yes" %}
+                {% elif profile.has_children == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+              <p><span class="info-label">{% trans "Want Children:" %}</span> 
+                {% if profile.wants_children == True %}{% trans "Yes" %}
+                {% elif profile.wants_children == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="info-label">{% trans "Smoker:" %}</span> 
+                {% if profile.smoker == True %}{% trans "Yes" %}
+                {% elif profile.smoker == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+              <p><span class="info-label">{% trans "Drinker:" %}</span> 
+                {% if profile.drinker == True %}{% trans "Yes" %}
+                {% elif profile.drinker == False %}{% trans "No" %}
+                {% else %}{% trans "Not specified" %}{% endif %}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "Interests" %}</h4>
+          {% if profile.profile.interests.all %}
+            <div class="d-flex flex-wrap">
+              {% for interest in profile.profile.interests.all %}
+                <span class="badge bg-light text-dark p-2 m-1">{{ interest.name }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>{% trans "No interests listed yet." %}</p>
+          {% endif %}
+        </div>
+        
+        <div class="profile-info-section">
+          <h4>{% trans "Photos" %}</h4>
+          <div class="photo-gallery">
+            {% if profile.photo_1 %}
+              <img src="{{ profile.photo_1.url }}" class="profile-photo" alt="Photo 1">
+            {% endif %}
+            
+            {% if profile.photo_2 %}
+              <img src="{{ profile.photo_2.url }}" class="profile-photo" alt="Photo 2">
+            {% endif %}
+            
+            {% if profile.photo_3 %}
+              <img src="{{ profile.photo_3.url }}" class="profile-photo" alt="Photo 3">
+            {% endif %}
+            
+            {% if profile.photo_4 %}
+              <img src="{{ profile.photo_4.url }}" class="profile-photo" alt="Photo 4">
+            {% endif %}
+            
+            {% if not profile.photo_1 and not profile.photo_2 and not profile.photo_3 and not profile.photo_4 %}
+              <p>{% trans "No photos uploaded yet." %}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="text-center mt-4">
+          <a href="{% url 'mainstream:browse_profiles' %}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-search"></i> {% trans "Browse Profiles" %}
+          </a>
+          <a href="{% url 'mainstream:matches' %}" class="btn btn-outline-primary">
+            <i class="fas fa-heart"></i> {% trans "View Matches" %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

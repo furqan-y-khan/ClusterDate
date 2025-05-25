@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ religion_name }} Dating Community - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{{ religion_name }} Dating</h1>
+            <p class="lead">{% trans "Connect with singles who share your faith and beliefs" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if religion_code == 'CH' %}
+                            <i class="fas fa-cross fa-4x text-primary mb-3"></i>
+                        {% elif religion_code == 'IS' %}
+                            <i class="fas fa-star-and-crescent fa-4x text-success mb-3"></i>
+                        {% elif religion_code == 'HI' %}
+                            <i class="fas fa-om fa-4x text-danger mb-3"></i>
+                        {% elif religion_code == 'JU' %}
+                            <i class="fas fa-star-of-david fa-4x text-info mb-3"></i>
+                        {% elif religion_code == 'BU' %}
+                            <i class="fas fa-dharmachakra fa-4x text-warning mb-3"></i>
+                        {% elif religion_code == 'SI' %}
+                            <i class="fas fa-khanda fa-4x text-primary mb-3"></i>
+                        {% elif religion_code == 'OT' %}
+                            <i class="fas fa-pray fa-4x text-success mb-3"></i>
+                        {% else %}
+                            <i class="fas fa-infinity fa-4x text-secondary mb-3"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <h2 class="h4 mb-3 text-center">{% trans "About" %} {{ religion_name }} {% trans "Dating" %}</h2>
+                    
+                    {% if religion_code == 'CH' %}
+                        <p>{% trans "Connect with Christian singles who share your faith, values, and commitment to Christ. Whether you're looking for someone who shares your denomination or simply your core Christian beliefs, our community helps you find meaningful relationships grounded in faith." %}</p>
+                    {% elif religion_code == 'IS' %}
+                        <p>{% trans "Meet Muslim singles who share your values and commitment to Islamic principles. Our platform helps Muslims find compatible partners who understand and respect the importance of faith in relationships and daily life." %}</p>
+                    {% elif religion_code == 'HI' %}
+                        <p>{% trans "Connect with Hindu singles who share your traditions, cultural background, and spiritual beliefs. Find someone who understands the importance of Hindu values, traditions, and celebrations in building a life together." %}</p>
+                    {% elif religion_code == 'JU' %}
+                        <p>{% trans "Meet Jewish singles who share your heritage, traditions, and values. Whether you're Orthodox, Conservative, Reform, or culturally Jewish, find someone who understands the importance of Jewish identity and traditions." %}</p>
+                    {% elif religion_code == 'BU' %}
+                        <p>{% trans "Connect with Buddhist singles who share your spiritual path and mindful approach to life. Find someone who understands Buddhist principles and practices, and who walks a similar spiritual journey." %}</p>
+                    {% elif religion_code == 'SI' %}
+                        <p>{% trans "Meet Sikh singles who share your faith, values, and cultural traditions. Our platform helps you connect with others who understand the importance of Sikh principles and community in building a life together." %}</p>
+                    {% elif religion_code == 'OT' %}
+                        <p>{% trans "Connect with singles from diverse spiritual backgrounds, including Bahá'í, Jain, Zoroastrian, Pagan, and many other faith traditions. Find someone who shares your unique spiritual path and values." %}</p>
+                    {% else %}
+                        <p>{% trans "Meet singles who identify as spiritual but not religious, agnostic, or who follow personal spiritual practices. Connect with others who share your approach to spirituality and life philosophy, without traditional religious structures." %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h2 class="h4 mb-0">{% trans "Browse" %} {{ religion_name }} {% trans "Singles" %}</h2>
+                </div>
+                <div class="card-body">
+                    {% if profiles %}
+                        <div class="row">
+                            {% for profile in profiles %}
+                                <div class="col-md-4 col-lg-3 mb-4">
+                                    <div class="card h-100 profile-card">
+                                        {% if profile.photo %}
+                                            <img src="{{ profile.photo.url }}" class="card-img-top profile-img" alt="{{ profile.name }}">
+                                        {% else %}
+                                            <img src="{% static 'images/default-avatar.png' %}" class="card-img-top profile-img" alt="Default profile">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ profile.name }}, {{ profile.age }}</h5>
+                                            <p class="card-text text-muted">{{ profile.location }}</p>
+                                            <p class="card-text">{{ profile.faith_summary|truncatechars:60 }}</p>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">{% trans "View Profile" %}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                            <h3 class="h5">{% trans "No profiles to display" %}</h3>
+                            <p class="text-muted">{% trans "We're still growing our community. Check back soon or be the first to create a profile!" %}</p>
+                            <a href="{% url 'religion:religion_profile' %}" class="btn btn-primary mt-2">
+                                <i class="fas fa-user-plus me-2"></i> {% trans "Create Your Profile" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3 text-center">{% trans "Join Our" %} {{ religion_name }} {% trans "Dating Community" %}</h2>
+                    <p class="text-center mb-4">{% trans "Create your profile today to connect with singles who share your faith" %}</p>
+                    <div class="text-center">
+                        <a href="{% url 'religion:religion_profile' %}" class="btn btn-lg btn-primary">
+                            <i class="fas fa-user-plus me-2"></i> {% trans "Get Started" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        transition: all 0.3s ease;
+    }
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .profile-img {
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %} 

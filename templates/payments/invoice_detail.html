@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice #{{ invoice.number|default:invoice.id }} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'payments:invoice_list' %}" class="btn btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left me-2"></i> Back to Invoices
+            </a>
+            <h2 class="section-title">Invoice #{{ invoice.number|default:invoice.id }}</h2>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Invoice Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Invoice Date:</div>
+                        <div class="col-sm-8">{{ invoice.created_at|date:"F j, Y" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Status:</div>
+                        <div class="col-sm-8">
+                            {% if invoice.status == 'paid' %}
+                            <span class="badge bg-success">Paid</span>
+                            {% elif invoice.status == 'open' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif invoice.status == 'uncollectible' %}
+                            <span class="badge bg-danger">Failed</span>
+                            {% elif invoice.status == 'void' %}
+                            <span class="badge bg-secondary">Voided</span>
+                            {% else %}
+                            <span class="badge bg-info">{{ invoice.status|title }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if invoice.paid_at %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Payment Date:</div>
+                        <div class="col-sm-8">{{ invoice.paid_at|date:"F j, Y" }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if invoice.due_date %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Due Date:</div>
+                        <div class="col-sm-8">{{ invoice.due_date|date:"F j, Y" }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Amount:</div>
+                        <div class="col-sm-8 fw-bold">{{ invoice.amount_due }} {{ invoice.currency }}</div>
+                    </div>
+                    
+                    {% if invoice.subscription %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Subscription:</div>
+                        <div class="col-sm-8">{{ invoice.subscription.plan.name }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if invoice.invoice_pdf %}
+                    <div class="mt-4">
+                        <a href="{{ invoice.invoice_pdf }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i> Download Invoice PDF
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if invoice.billing_address %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Billing Address</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1">{{ invoice.billing_address.name }}</p>
+                    <p class="mb-1">{{ invoice.billing_address.street_address }}</p>
+                    {% if invoice.billing_address.street_address_line2 %}
+                    <p class="mb-1">{{ invoice.billing_address.street_address_line2 }}</p>
+                    {% endif %}
+                    <p class="mb-1">{{ invoice.billing_address.city }}, {{ invoice.billing_address.state }} {{ invoice.billing_address.postal_code }}</p>
+                    <p>{{ invoice.billing_address.country.name }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Payment Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <span>{{ invoice.amount_due }} {{ invoice.currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Tax:</span>
+                        <span>0.00 {{ invoice.currency }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3 fw-bold">
+                        <span>Total:</span>
+                        <span>{{ invoice.amount_due }} {{ invoice.currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Amount Paid:</span>
+                        <span>{{ invoice.amount_paid }} {{ invoice.currency }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% if invoice.status == 'open' and invoice.amount_paid < invoice.amount_due %}
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Pay this Invoice</h5>
+                    <a href="#" class="btn btn-success w-100">
+                        <i class="fas fa-credit-card me-2"></i> Pay Now
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

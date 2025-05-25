@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Recommended Profiles" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .recommended-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .profile-card {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    margin-bottom: 25px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  
+  .profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-img {
+    height: 250px;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  .profile-info {
+    padding: 20px;
+  }
+  
+  .profile-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  
+  .profile-details {
+    color: #777;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .match-score {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .match-high {
+    background-color: #d4f7d4;
+    color: #28a745;
+  }
+  
+  .match-medium {
+    background-color: #fff3cd;
+    color: #ffc107;
+  }
+  
+  .match-low {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+  
+  .btn-like {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+  }
+  
+  .btn-like:hover {
+    background-color: #ff5252;
+    border-color: #ff5252;
+    color: white;
+  }
+  
+  .no-recommendations {
+    text-align: center;
+    padding: 50px 0;
+    color: #777;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="recommended-container">
+        <h2 class="mb-4">{% trans "Recommended For You" %}</h2>
+        <p class="text-muted mb-4">{% trans "Based on your preferences and profile, we think you might like these people" %}</p>
+        
+        {% if profiles %}
+          <div class="row">
+            {% for profile in profiles %}
+              <div class="col-md-6 col-lg-4">
+                <div class="profile-card">
+                  {% if profile.photo_1 %}
+                    <img src="{{ profile.photo_1.url }}" class="profile-img" alt="Profile">
+                  {% elif profile.profile.profile_picture %}
+                    <img src="{{ profile.profile.profile_picture.url }}" class="profile-img" alt="Profile">
+                  {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" class="profile-img" alt="Profile">
+                  {% endif %}
+                  
+                  <div class="profile-info">
+                    <div class="profile-name">{{ profile.profile.user.get_full_name|default:profile.profile.user.username }}</div>
+                    <div class="profile-details">
+                      {% if profile.profile.age %}{{ profile.profile.age }} {% trans "years old" %}{% endif %}
+                      {% if profile.profile.location %} • {{ profile.profile.location }}{% endif %}
+                    </div>
+                    <div class="profile-details">
+                      {{ profile.get_looking_for_display|default:"" }}
+                      {% if profile.occupation %} • {{ profile.occupation }}{% endif %}
+                    </div>
+                    
+                    {% if profile.match_score >= 60 %}
+                      <div class="match-score match-high">
+                        <i class="fas fa-star"></i> {% trans "High Match" %} ({{ profile.match_score }}%)
+                      </div>
+                    {% elif profile.match_score >= 30 %}
+                      <div class="match-score match-medium">
+                        <i class="fas fa-star-half-alt"></i> {% trans "Good Match" %} ({{ profile.match_score }}%)
+                      </div>
+                    {% else %}
+                      <div class="match-score match-low">
+                        <i class="far fa-star"></i> {% trans "Low Match" %} ({{ profile.match_score }}%)
+                      </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                      <a href="{% url 'mainstream:profile_detail' profile.profile.user.username %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-user"></i> {% trans "View Profile" %}
+                      </a>
+                      
+                      <div>
+                        <button class="btn btn-primary btn-sm connect-btn" data-username="{{ profile.profile.user.username }}">
+                          <i class="fas fa-link"></i> {% trans "Connect" %}
+                        </button>
+                        
+                        <button class="btn btn-like like-btn" data-username="{{ profile.profile.user.username }}">
+                          <i class="fas fa-heart"></i> {% trans "Like" %}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          
+          <div class="text-center mt-4">
+            <a href="{% url 'mainstream:browse_profiles' %}" class="btn btn-outline-primary">
+              <i class="fas fa-search"></i> {% trans "Browse All Profiles" %}
+            </a>
+          </div>
+        {% else %}
+          <div class="no-recommendations">
+            <i class="fas fa-user-friends fa-4x mb-3 text-muted"></i>
+            <h3>{% trans "No recommendations yet" %}</h3>
+            <p>{% trans "Complete your profile to get better recommendations" %}</p>
+            <a href="{% url 'mainstream:browse_profiles' %}" class="btn btn-primary mt-3">
+              <i class="fas fa-search"></i> {% trans "Browse Profiles" %}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Add CSRF token to all AJAX requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Connect button
+    $('.connect-btn').click(function() {
+      const btn = $(this);
+      const username = btn.data('username');
+      
+      $.ajax({
+        url: `/mainstream/profile/${username}/like/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'match' || response.status === 'liked') {
+            // Show notification
+            if (response.status === 'match') {
+              toastr.success(response.message);
+            } else {
+              toastr.info(response.message);
+            }
+            
+            // Remove the card with animation
+            btn.closest('.col-md-6').fadeOut(function() {
+              $(this).remove();
+              
+              // If no profiles left, refresh the page
+              if ($('.profile-card').length === 0) {
+                location.reload();
+              }
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error:", error);
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+    
+    // Like profile
+    $('.like-btn').click(function() {
+      const btn = $(this);
+      const username = btn.data('username');
+      
+      $.ajax({
+        url: `/mainstream/profile/${username}/like/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'match') {
+            // Show match notification
+            toastr.success(response.message);
+            
+            // Remove the card with animation
+            btn.closest('.col-md-6').fadeOut(function() {
+              $(this).remove();
+              
+              // If no profiles left, refresh the page
+              if ($('.profile-card').length === 0) {
+                location.reload();
+              }
+            });
+          } else if (response.status === 'liked') {
+            toastr.info(response.message);
+            
+            // Remove the card with animation
+            btn.closest('.col-md-6').fadeOut(function() {
+              $(this).remove();
+              
+              // If no profiles left, refresh the page
+              if ($('.profile-card').length === 0) {
+                location.reload();
+              }
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error:", error);
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

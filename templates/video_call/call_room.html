@@ -1,0 +1,568 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ call_type }} Call with {{ peer.username }} - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .call-container {
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        position: relative;
+    }
+    
+    .video-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        position: relative;
+        background-color: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    #remote-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-color: #222;
+    }
+    
+    #local-video {
+        position: absolute;
+        width: 25%;
+        max-height: 30%;
+        object-fit: cover;
+        bottom: 20px;
+        right: 20px;
+        border-radius: 8px;
+        border: 2px solid #fff;
+        z-index: 10;
+        background-color: #333;
+    }
+    
+    .call-controls {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+        gap: 20px;
+    }
+    
+    .control-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .control-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .mute-btn {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .mute-btn.active {
+        background-color: #dc3545;
+    }
+    
+    .video-btn {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .video-btn.active {
+        background-color: #dc3545;
+    }
+    
+    .end-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .call-status {
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        padding: 10px;
+        font-size: 18px;
+        z-index: 5;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .incoming-call {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 30px;
+    }
+    
+    .caller-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .caller-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid #007bff;
+    }
+    
+    .call-actions {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .accept-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    
+    .reject-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    
+    .hidden {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ call_type }} Call</h1>
+    
+    {% if call_session.status == 'REQUESTED' and not is_caller %}
+    <!-- Incoming call view for receiver -->
+    <div class="incoming-call" id="incoming-call-container">
+        <div class="caller-info">
+            {% if peer.profile.profile_picture %}
+            <img src="{{ peer.profile.profile_picture.url }}" alt="{{ peer.username }}" class="caller-avatar">
+            {% else %}
+            <div class="caller-avatar d-flex align-items-center justify-content-center bg-primary text-white">
+                <span style="font-size: 48px;">{{ peer.username.0|upper }}</span>
+            </div>
+            {% endif %}
+            <h2>{{ peer.username }} is calling you</h2>
+            <p>{{ call_type }} Call</p>
+        </div>
+        <div class="call-actions">
+            <button class="accept-btn" id="accept-call-btn">
+                <i class="fas fa-phone-alt"></i> Accept
+            </button>
+            <button class="reject-btn" id="reject-call-btn">
+                <i class="fas fa-phone-slash"></i> Reject
+            </button>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Call room view -->
+    <div class="call-container {% if call_session.status == 'REQUESTED' and not is_caller %}hidden{% endif %}" id="call-container">
+        <div class="video-container">
+            <video id="remote-video" autoplay playsinline></video>
+            <video id="local-video" autoplay playsinline muted></video>
+            <div class="call-status" id="call-status">
+                {% if call_session.status == 'REQUESTED' %}
+                    {% if is_caller %}
+                    Calling {{ peer.username }}...
+                    {% else %}
+                    Connecting...
+                    {% endif %}
+                {% elif call_session.status == 'ONGOING' %}
+                Connected
+                {% else %}
+                {{ call_session.status|title }}
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="call-controls">
+            <button class="control-btn mute-btn" id="mute-btn" title="Mute/Unmute">
+                <i class="fas fa-microphone"></i>
+            </button>
+            {% if call_session.call_type == 'VIDEO' %}
+            <button class="control-btn video-btn" id="video-btn" title="Turn Video On/Off">
+                <i class="fas fa-video"></i>
+            </button>
+            {% endif %}
+            <button class="control-btn end-btn" id="end-call-btn" title="End Call">
+                <i class="fas fa-phone-slash"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+    // WebRTC variables
+    let localStream;
+    let peerConnection;
+    let isCallStarted = false;
+    let isCaller = {{ is_caller|lower }};
+    let callStatus = "{{ call_session.status }}";
+    let callId = "{{ call_session.session_id }}";
+    let isAudioMuted = false;
+    let isVideoOff = false;
+    
+    // STUN/TURN servers configuration
+    const iceServers = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            {
+                urls: '{{ TURN_SERVER }}',
+                username: '{{ TURN_USERNAME }}',
+                credential: '{{ TURN_CREDENTIAL }}'
+            }
+        ]
+    };
+    
+    // WebSocket connection
+    const callSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/call/' + callId + '/'
+    );
+    
+    callSocket.onopen = function(e) {
+        console.log('WebSocket connection established');
+    };
+    
+    callSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log('WebSocket message received:', data);
+        
+        switch(data.type) {
+            case 'offer':
+                handleOffer(data.offer);
+                break;
+            case 'answer':
+                handleAnswer(data.answer);
+                break;
+            case 'ice_candidate':
+                handleIceCandidate(data.candidate);
+                break;
+            case 'call_ended':
+                handleCallEnded(data.ended_by);
+                break;
+            case 'call_accepted':
+                handleCallAccepted(data.accepted_by);
+                break;
+            case 'call_rejected':
+                handleCallRejected(data.rejected_by);
+                break;
+        }
+    };
+    
+    callSocket.onclose = function(e) {
+        console.log('WebSocket connection closed');
+    };
+    
+    // Initialize call
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up event listeners for call controls
+        document.getElementById('mute-btn').addEventListener('click', toggleAudio);
+        if (document.getElementById('video-btn')) {
+            document.getElementById('video-btn').addEventListener('click', toggleVideo);
+        }
+        document.getElementById('end-call-btn').addEventListener('click', endCall);
+        
+        // Set up event listeners for incoming call actions
+        if (document.getElementById('accept-call-btn')) {
+            document.getElementById('accept-call-btn').addEventListener('click', acceptCall);
+        }
+        if (document.getElementById('reject-call-btn')) {
+            document.getElementById('reject-call-btn').addEventListener('click', rejectCall);
+        }
+        
+        // Initialize WebRTC if call is already ongoing or if user is the caller
+        if (callStatus === 'ONGOING' || isCaller) {
+            initializeCall();
+        }
+    });
+    
+    async function initializeCall() {
+        try {
+            // Get user media based on call type
+            const constraints = {
+                audio: true,
+                video: "{{ call_session.call_type }}" === "VIDEO"
+            };
+            
+            localStream = await navigator.mediaDevices.getUserMedia(constraints);
+            document.getElementById('local-video').srcObject = localStream;
+            
+            // Create peer connection
+            createPeerConnection();
+            
+            // Add local stream to peer connection
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+            
+            // If user is the caller, create and send offer
+            if (isCaller && callStatus === 'REQUESTED') {
+                createOffer();
+            }
+        } catch (error) {
+            console.error('Error initializing call:', error);
+            alert('Could not access camera or microphone. Please check your permissions.');
+        }
+    }
+    
+    function createPeerConnection() {
+        peerConnection = new RTCPeerConnection(iceServers);
+        
+        // Handle ICE candidates
+        peerConnection.onicecandidate = event => {
+            if (event.candidate) {
+                callSocket.send(JSON.stringify({
+                    'type': 'ice_candidate',
+                    'candidate': event.candidate
+                }));
+            }
+        };
+        
+        // Handle connection state changes
+        peerConnection.onconnectionstatechange = event => {
+            if (peerConnection.connectionState === 'connected') {
+                document.getElementById('call-status').textContent = 'Connected';
+            } else if (peerConnection.connectionState === 'disconnected' || 
+                       peerConnection.connectionState === 'failed') {
+                document.getElementById('call-status').textContent = 'Disconnected';
+            }
+        };
+        
+        // Handle remote stream
+        peerConnection.ontrack = event => {
+            document.getElementById('remote-video').srcObject = event.streams[0];
+        };
+    }
+    
+    async function createOffer() {
+        try {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            
+            callSocket.send(JSON.stringify({
+                'type': 'offer',
+                'offer': offer
+            }));
+        } catch (error) {
+            console.error('Error creating offer:', error);
+        }
+    }
+    
+    async function handleOffer(offer) {
+        if (!peerConnection) {
+            await initializeCall();
+        }
+        
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            
+            callSocket.send(JSON.stringify({
+                'type': 'answer',
+                'answer': answer
+            }));
+        } catch (error) {
+            console.error('Error handling offer:', error);
+        }
+    }
+    
+    async function handleAnswer(answer) {
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        } catch (error) {
+            console.error('Error handling answer:', error);
+        }
+    }
+    
+    async function handleIceCandidate(candidate) {
+        try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (error) {
+            console.error('Error handling ICE candidate:', error);
+        }
+    }
+    
+    function handleCallEnded(endedBy) {
+        document.getElementById('call-status').textContent = 'Call Ended';
+        closeConnection();
+        
+        // Redirect to feedback page after a short delay
+        setTimeout(() => {
+            window.location.href = `/video-call/feedback/${callId}/`;
+        }, 2000);
+    }
+    
+    function handleCallAccepted(acceptedBy) {
+        document.getElementById('call-status').textContent = 'Call Accepted';
+        callStatus = 'ONGOING';
+    }
+    
+    function handleCallRejected(rejectedBy) {
+        document.getElementById('call-status').textContent = 'Call Rejected';
+        closeConnection();
+        
+        // Redirect to call history after a short delay
+        setTimeout(() => {
+            window.location.href = '/video-call/history/';
+        }, 2000);
+    }
+    
+    function toggleAudio() {
+        if (localStream) {
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                isAudioMuted = !audioTrack.enabled;
+                
+                const muteBtn = document.getElementById('mute-btn');
+                muteBtn.innerHTML = isAudioMuted ? 
+                    '<i class="fas fa-microphone-slash"></i>' : 
+                    '<i class="fas fa-microphone"></i>';
+                muteBtn.classList.toggle('active', isAudioMuted);
+            }
+        }
+    }
+    
+    function toggleVideo() {
+        if (localStream) {
+            const videoTrack = localStream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                isVideoOff = !videoTrack.enabled;
+                
+                const videoBtn = document.getElementById('video-btn');
+                videoBtn.innerHTML = isVideoOff ? 
+                    '<i class="fas fa-video-slash"></i>' : 
+                    '<i class="fas fa-video"></i>';
+                videoBtn.classList.toggle('active', isVideoOff);
+            }
+        }
+    }
+    
+    function endCall() {
+        callSocket.send(JSON.stringify({
+            'type': 'end_call'
+        }));
+        
+        // Also send HTTP request to update call status in database
+        fetch(`/video-call/end/${callId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        closeConnection();
+    }
+    
+    function acceptCall() {
+        // Hide incoming call container and show call container
+        document.getElementById('incoming-call-container').classList.add('hidden');
+        document.getElementById('call-container').classList.remove('hidden');
+        
+        // Send accept message via WebSocket
+        callSocket.send(JSON.stringify({
+            'type': 'accept_call'
+        }));
+        
+        // Also send HTTP request to update call status in database
+        fetch(`/video-call/accept/${callId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        // Initialize WebRTC
+        initializeCall();
+    }
+    
+    function rejectCall() {
+        // Send reject message via WebSocket
+        callSocket.send(JSON.stringify({
+            'type': 'reject_call'
+        }));
+        
+        // Also send HTTP request to update call status in database
+        fetch(`/video-call/reject/${callId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        // Redirect to call history
+        window.location.href = '/video-call/history/';
+    }
+    
+    function closeConnection() {
+        // Stop all tracks in local stream
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Close peer connection
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %} 

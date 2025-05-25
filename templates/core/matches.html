@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Matches{% endblock %}
+
+{% block extra_css %}
+<style>
+    .match-container {
+        margin-top: 2rem;
+    }
+    
+    .match-tabs {
+        border-bottom: 2px solid #f0f0f0;
+        margin-bottom: 2rem;
+    }
+    
+    .match-tab {
+        display: inline-block;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: #666;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .match-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    .card-match {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .card-match:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .match-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f9f9f9;
+    }
+    
+    .match-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+    }
+    
+    .match-info {
+        padding: 1.5rem;
+    }
+    
+    .match-name {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .match-bio {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+    
+    .match-status {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .status-pending {
+        color: #f39c12;
+    }
+    
+    .status-matched {
+        color: #2ecc71;
+    }
+    
+    .match-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container match-container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="mb-4">Your Matches</h1>
+            
+            <div class="match-tabs">
+                <div class="match-tab active" data-tab="pending">Pending Matches</div>
+                <div class="match-tab" data-tab="connected">Connected Matches</div>
+            </div>
+            
+            <!-- Pending Matches Tab -->
+            <div class="tab-content active" id="pending-matches">
+                {% if pending_matches %}
+                    <div class="row">
+                        {% for match in pending_matches %}
+                            <div class="col-md-6">
+                                <div class="card card-match">
+                                    <div class="match-header">
+                                        {% if match.profile.profile_picture %}
+                                            <img src="{{ match.profile.profile_picture.url }}" alt="{{ match.username }}" class="match-img">
+                                        {% else %}
+                                            <div class="match-img-placeholder d-flex align-items-center justify-content-center bg-light">
+                                                <i class="fas fa-user text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h5 class="match-name">{{ match.username }}</h5>
+                                            <p class="match-status status-pending"><i class="fas fa-clock me-1"></i> Pending Approval</p>
+                                        </div>
+                                    </div>
+                                    <div class="match-info">
+                                        <p class="match-bio">
+                                            {% if match.profile.bio %}
+                                                {{ match.profile.bio|truncatechars:100 }}
+                                            {% else %}
+                                                No bio available
+                                            {% endif %}
+                                        </p>
+                                        
+                                        <div class="match-actions">
+                                            <a href="{% url 'core:profile_detail' match.username %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-user me-1"></i> View Profile
+                                            </a>
+                                            <button class="btn btn-sm btn-success accept-match-btn" data-user-id="{{ match.id }}">
+                                                <i class="fas fa-check me-1"></i> Accept
+                                            </button>
+                                            <button class="btn btn-sm btn-danger decline-match-btn" data-user-id="{{ match.id }}">
+                                                <i class="fas fa-times me-1"></i> Decline
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="far fa-clock"></i>
+                        </div>
+                        <h3>No Pending Matches</h3>
+                        <p>You don't have any pending match requests at the moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Connected Matches Tab -->
+            <div class="tab-content" id="connected-matches">
+                {% if connected_matches %}
+                    <div class="row">
+                        {% for match in connected_matches %}
+                            <div class="col-md-6">
+                                <div class="card card-match">
+                                    <div class="match-header">
+                                        {% if match.profile.profile_picture %}
+                                            <img src="{{ match.profile.profile_picture.url }}" alt="{{ match.username }}" class="match-img">
+                                        {% else %}
+                                            <div class="match-img-placeholder d-flex align-items-center justify-content-center bg-light">
+                                                <i class="fas fa-user text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h5 class="match-name">{{ match.username }}</h5>
+                                            <p class="match-status status-matched"><i class="fas fa-link me-1"></i> Connected</p>
+                                        </div>
+                                    </div>
+                                    <div class="match-info">
+                                        <p class="match-bio">
+                                            {% if match.profile.bio %}
+                                                {{ match.profile.bio|truncatechars:100 }}
+                                            {% else %}
+                                                No bio available
+                                            {% endif %}
+                                        </p>
+                                        
+                                        <div class="match-actions">
+                                            <a href="{% url 'core:profile_detail' match.username %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-user me-1"></i> View Profile
+                                            </a>
+                                            <a href="{% url 'messaging:start_conversation' match.username %}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-comment me-1"></i> Message
+                                            </a>
+                                            <a href="{% url 'video_call:initiate' match.username %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-video me-1"></i> Video Call
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <h3>No Connections Yet</h3>
+                        <p>When you and someone else both match, they'll appear here.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Tab switching
+        $('.match-tab').click(function() {
+            $('.match-tab').removeClass('active');
+            $(this).addClass('active');
+            
+            const tabId = $(this).data('tab');
+            $('.tab-content').removeClass('active');
+            $(`#${tabId}-matches`).addClass('active');
+        });
+        
+        // Accept match request
+        $('.accept-match-btn').click(function() {
+            const userId = $(this).data('user-id');
+            const card = $(this).closest('.card-match');
+            
+            // Get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            const csrftoken = getCookie('csrftoken');
+            
+            $.ajax({
+                url: `/core/accept-match/${userId}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                success: function(response) {
+                    toastr.success("Match accepted! You're now connected.");
+                    card.fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // If no more pending matches, show empty state
+                        if ($('#pending-matches .card-match').length === 0) {
+                            $('#pending-matches').html(`
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="far fa-clock"></i>
+                                    </div>
+                                    <h3>No Pending Matches</h3>
+                                    <p>You don't have any pending match requests at the moment.</p>
+                                </div>
+                            `);
+                        }
+                        
+                        // Refresh the page to update connected matches
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    });
+                },
+                error: function() {
+                    toastr.error('There was an error processing your request');
+                }
+            });
+        });
+        
+        // Decline match request
+        $('.decline-match-btn').click(function() {
+            const userId = $(this).data('user-id');
+            const card = $(this).closest('.card-match');
+            
+            // Get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            const csrftoken = getCookie('csrftoken');
+            
+            $.ajax({
+                url: `/core/decline-match/${userId}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                success: function(response) {
+                    toastr.info("Match request declined.");
+                    card.fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // If no more pending matches, show empty state
+                        if ($('#pending-matches .card-match').length === 0) {
+                            $('#pending-matches').html(`
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="far fa-clock"></i>
+                                    </div>
+                                    <h3>No Pending Matches</h3>
+                                    <p>You don't have any pending match requests at the moment.</p>
+                                </div>
+                            `);
+                        }
+                    });
+                },
+                error: function() {
+                    toastr.error('There was an error processing your request');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

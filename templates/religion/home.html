@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Faith-Based Dating{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron bg-gradient-primary text-white">
+        <h1 class="display-4">Faith-Based Dating</h1>
+        <p class="lead">Connect with singles who share your faith, values, and spiritual journey.</p>
+        {% if not request.user.is_authenticated %}
+        <hr class="my-4 bg-light">
+        <p>Join our faith community today to find your spiritual match!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'religion:register' %}" role="button">Sign Up Now</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'religion:login' %}" role="button">Login</a>
+        {% else %}
+            {% if not has_profile %}
+            <hr class="my-4 bg-light">
+            <p>Complete your faith profile to start connecting with others who share your beliefs.</p>
+            <a class="btn btn-light btn-lg" href="{% url 'religion:religion_profile' %}" role="button">Create Profile</a>
+            {% else %}
+            <hr class="my-4 bg-light">
+            <p>Browse profiles and find your spiritual partner!</p>
+            <a class="btn btn-light btn-lg" href="{% url 'religion:religion_matches' %}" role="button">Browse Matches</a>
+            <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'religion:religion_profile' %}" role="button">Edit Profile</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">Faith-Centered Relationships</h4>
+                    <p class="card-text">Find someone who shares your religious beliefs, practices, and values.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'religion:about' %}" class="btn btn-primary btn-sm">Learn More</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-church fa-3x text-success mb-3"></i>
+                    <h4 class="card-title">Shared Worship</h4>
+                    <p class="card-text">Connect with singles who share your denomination, practices, and religious activities.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'religion:communities' %}" class="btn btn-success btn-sm">View Communities</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-hands-helping fa-3x text-danger mb-3"></i>
+                    <h4 class="card-title">Interfaith Options</h4>
+                    <p class="card-text">Open to dating someone from another faith? We can help with that too.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'religion:interfaith' %}" class="btn btn-danger btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Faith Communities</h2>
+            <p class="text-center">Find your spiritual match within your faith tradition</p>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-cross fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Christianity</h5>
+                    <a href="{% url 'religion:community' 'CH' %}" class="btn btn-sm btn-outline-primary">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-star-and-crescent fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Islam</h5>
+                    <a href="{% url 'religion:community' 'IS' %}" class="btn btn-sm btn-outline-success">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-om fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Hinduism</h5>
+                    <a href="{% url 'religion:community' 'HI' %}" class="btn btn-sm btn-outline-danger">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-star-of-david fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Judaism</h5>
+                    <a href="{% url 'religion:community' 'JU' %}" class="btn btn-sm btn-outline-info">Browse</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4 mb-5">
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-dharmachakra fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Buddhism</h5>
+                    <a href="{% url 'religion:community' 'BU' %}" class="btn btn-sm btn-outline-warning">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-khanda fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Sikhism</h5>
+                    <a href="{% url 'religion:community' 'SI' %}" class="btn btn-sm btn-outline-primary">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-pray fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Other Faiths</h5>
+                    <a href="{% url 'religion:community' 'OT' %}" class="btn btn-sm btn-outline-success">Browse</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-infinity fa-3x text-secondary mb-3"></i>
+                    <h5 class="card-title">Spiritual/Non-Religious</h5>
+                    <a href="{% url 'religion:community' 'NO' %}" class="btn btn-sm btn-outline-secondary">Browse</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

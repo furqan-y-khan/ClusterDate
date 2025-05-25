@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LGBTQ+ Dating{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron bg-gradient-primary text-white">
+        <h1 class="display-4">Welcome to LGBTQ+ Dating</h1>
+        <p class="lead">Connect with LGBTQ+ singles in a safe and inclusive environment designed for authentic connections.</p>
+        {% if not request.user.is_authenticated %}
+        <hr class="my-4 bg-light">
+        <p>Join our supportive community today to find your perfect match!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'lgbtq:register' %}" role="button">Sign Up Now</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'lgbtq:login' %}" role="button">Login</a>
+        {% else %}
+        <hr class="my-4 bg-light">
+        <p>Browse profiles, set your preferences, and connect with amazing people!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'lgbtq:browse' %}" role="button">Browse Profiles</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'lgbtq:profile_edit' %}" role="button">Edit Profile</a>
+        {% endif %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">Safe & Inclusive</h4>
+                    <p class="card-text">Our platform is designed to be respectful of all gender identities, sexual orientations, and expressions. Your safety is our top priority.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'lgbtq:safety' %}" class="btn btn-primary btn-sm">Learn More</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h4 class="card-title">Community Events</h4>
+                    <p class="card-text">Discover LGBTQ+ events in your area, join virtual meetups, and connect with others in your community.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'lgbtq:events' %}" class="btn btn-success btn-sm">View Events</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                    <h4 class="card-title">Meaningful Connections</h4>
+                    <p class="card-text">Our matching algorithm helps you find people who share your values, interests, and relationship goals.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'lgbtq:how_it_works' %}" class="btn btn-danger btn-sm">How It Works</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Express Yourself</h2>
+            <p class="text-center">Our platform celebrates all identities and orientations</p>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <h5 class="card-title">Gender Identity</h5>
+                    <p class="card-text">Express your authentic gender identity with customizable options</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <h5 class="card-title">Sexual Orientation</h5>
+                    <p class="card-text">Define your orientation in your own terms</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <h5 class="card-title">Pronouns</h5>
+                    <p class="card-text">Display your pronouns prominently on your profile</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body py-4">
+                    <h5 class="card-title">Coming Out Status</h5>
+                    <p class="card-text">Privacy settings to control who sees your profile</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 mb-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center py-5">
+                    <h3 class="mb-3">Join Our Supportive Community Today</h3>
+                    <p class="lead">Find friends, dates, relationships, and community in a safe, inclusive environment.</p>
+                    <a href="{% url 'lgbtq:register' %}" class="btn btn-primary btn-lg mt-3">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

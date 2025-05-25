@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Super Dating App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .auth-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+    
+    .auth-divider::before,
+    .auth-divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .auth-divider-text {
+        padding: 0 10px;
+        color: #6c757d;
+    }
+    
+    .social-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 12px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        font-size: 16px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .social-login-btn:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .social-login-btn img {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        height: 50px;
+        border-radius: 5px;
+    }
+    
+    .login-btn {
+        width: 100%;
+        height: 50px;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .login-btn:hover {
+        background-color: #0069d9;
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .auth-footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .error-message {
+        color: #dc3545;
+        margin-top: 10px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <h2 class="auth-title">Login to Super Dating App</h2>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <button id="google-login" class="social-login-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Continue with Google
+        </button>
+        
+        <button id="facebook-login" class="social-login-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" alt="Facebook">
+            Continue with Facebook
+        </button>
+        
+        <div class="auth-divider">
+            <span class="auth-divider-text">or</span>
+        </div>
+        
+        <form id="email-login-form">
+            <div class="form-group">
+                <input type="email" id="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{% url 'accounts:register' %}">Sign up</a></p>
+            <p><a href="{% url 'accounts:password_reset' %}">Forgot password?</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "{{ FIREBASE_CONFIG.apiKey }}",
+        authDomain: "{{ FIREBASE_CONFIG.authDomain }}",
+        projectId: "{{ FIREBASE_CONFIG.projectId }}",
+        storageBucket: "{{ FIREBASE_CONFIG.storageBucket }}",
+        messagingSenderId: "{{ FIREBASE_CONFIG.messagingSenderId }}",
+        appId: "{{ FIREBASE_CONFIG.appId }}",
+        measurementId: "{{ FIREBASE_CONFIG.measurementId }}"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    
+    // Get elements
+    const googleLoginBtn = document.getElementById('google-login');
+    const facebookLoginBtn = document.getElementById('facebook-login');
+    const emailLoginForm = document.getElementById('email-login-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Google login
+    googleLoginBtn.addEventListener('click', () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                // Get the user's ID token
+                return result.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return authenticateWithBackend(idToken, 'google');
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Facebook login
+    facebookLoginBtn.addEventListener('click', () => {
+        const provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                // Get the user's ID token
+                return result.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return authenticateWithBackend(idToken, 'facebook');
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Email/password login
+    emailLoginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Get the user's ID token
+                return userCredential.user.getIdToken();
+            })
+            .then((idToken) => {
+                // Send the token to your backend
+                return authenticateWithBackend(idToken, 'email');
+            })
+            .catch((error) => {
+                console.error(error);
+                errorMessage.textContent = error.message;
+            });
+    });
+    
+    // Send the token to the backend for authentication
+    function authenticateWithBackend(idToken, provider) {
+        return fetch('{% url "accounts:firebase_auth" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                idToken: idToken,
+                provider: provider
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Authentication failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Redirect to the specified URL
+                window.location.href = data.redirect_url;
+            } else {
+                throw new Error(data.error || 'Authentication failed');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            errorMessage.textContent = error.message;
+        });
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %} 

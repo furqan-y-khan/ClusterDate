@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Browse Cultural Profiles" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 mb-3">{% trans "Browse Cultural Profiles" %}</h1>
+            <p class="lead">{% trans "Find people who share your cultural heritage and traditions" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">{% trans "Filter Profiles" %}</h2>
+                    <form class="row g-3">
+                        <div class="col-md-4">
+                            <label for="ethnicity" class="form-label">{% trans "Cultural Background" %}</label>
+                            <select id="ethnicity" class="form-select">
+                                <option value="" selected>{% trans "All" %}</option>
+                                <option value="asian">{% trans "Asian" %}</option>
+                                <option value="african">{% trans "African" %}</option>
+                                <option value="european">{% trans "European" %}</option>
+                                <option value="hispanic">{% trans "Hispanic/Latino" %}</option>
+                                <option value="middleeastern">{% trans "Middle Eastern" %}</option>
+                                <option value="nativeamerican">{% trans "Native American" %}</option>
+                                <option value="pacificislander">{% trans "Pacific Islander" %}</option>
+                                <option value="other">{% trans "Other" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="age" class="form-label">{% trans "Age Range" %}</label>
+                            <select id="age" class="form-select">
+                                <option value="all" selected>{% trans "All Ages" %}</option>
+                                <option value="18-25">18-25</option>
+                                <option value="26-35">26-35</option>
+                                <option value="36-45">36-45</option>
+                                <option value="46-55">46-55</option>
+                                <option value="56+">56+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="distance" class="form-label">{% trans "Distance" %}</label>
+                            <select id="distance" class="form-select">
+                                <option value="10">{% trans "Within 10 miles" %}</option>
+                                <option value="25" selected>{% trans "Within 25 miles" %}</option>
+                                <option value="50">{% trans "Within 50 miles" %}</option>
+                                <option value="100">{% trans "Within 100 miles" %}</option>
+                                <option value="any">{% trans "Any distance" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">{% trans "Apply Filters" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if profiles %}
+            {% for profile in profiles %}
+            <div class="col-md-4 mb-4">
+                <div class="card profile-card h-100 shadow-sm">
+                    <div class="profile-card-img">
+                        {% if profile.photo %}
+                        <img src="{{ profile.photo.url }}" class="card-img-top" alt="{{ profile.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Photo" class="card-img-top" alt="No photo">
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title h5">{{ profile.name }}</h3>
+                        <p class="card-text text-muted">{{ profile.age }} • {{ profile.location }}</p>
+                        <p class="card-text"><strong>{% trans "Cultural Background:" %}</strong> {{ profile.ethnicity }}</p>
+                        <p class="card-text">{{ profile.bio|truncatechars:100 }}</p>
+                        <a href="#" class="btn btn-primary btn-sm mt-2">{% trans "View Profile" %}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h2 class="h4">{% trans "No profiles found" %}</h2>
+                        <p class="text-muted">{% trans "We're still growing our community. Check back soon or adjust your search filters." %}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'ethnic:ethnic_index' %}" class="btn btn-outline-primary">{% trans "Back to Home" %}</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        transition: all 0.3s ease;
+    }
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .profile-card-img {
+        height: 200px;
+        overflow: hidden;
+    }
+    .profile-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %} 

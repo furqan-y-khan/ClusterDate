@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Interfaith Dating" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{% trans "Interfaith Dating" %}</h1>
+            <p class="lead">{% trans "Open your heart to connections across different belief systems" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">{% trans "The Beauty of Interfaith Relationships" %}</h2>
+                    <p>{% trans "Interfaith dating offers a unique opportunity to expand your horizons and connect with people from diverse spiritual backgrounds. While sharing the same faith can provide common ground, interfaith relationships can foster growth, understanding, and appreciation for different beliefs and traditions." %}</p>
+                    
+                    <div class="mt-4">
+                        <h3 class="h5 mb-3">{% trans "Benefits of Interfaith Dating" %}</h3>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                {% trans "Expanded perspectives and personal growth" %}
+                            </li>
+                            <li class="list-group-item bg-transparent">
+                                <i class="fas fa-hands text-warning me-2"></i>
+                                {% trans "Learning about new traditions and celebrations" %}
+                            </li>
+                            <li class="list-group-item bg-transparent">
+                                <i class="fas fa-user-friends text-warning me-2"></i>
+                                {% trans "Developing strong communication skills and mutual respect" %}
+                            </li>
+                            <li class="list-group-item bg-transparent">
+                                <i class="fas fa-heart text-warning me-2"></i>
+                                {% trans "Finding common spiritual and ethical values across different faiths" %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-4">{% trans "Navigating Interfaith Relationships" %}</h2>
+                    <p class="mb-4">{% trans "While interfaith relationships can be incredibly rewarding, they may also present unique challenges. Here are some tips for successful interfaith dating:" %}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">1</span>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">{% trans "Open Communication" %}</h3>
+                                    <p>{% trans "Discuss your religious beliefs, practices, and expectations early in the relationship." %}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">2</span>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">{% trans "Respect & Understanding" %}</h3>
+                                    <p>{% trans "Approach differences with curiosity rather than judgment. Respect each other's beliefs even when you don't share them." %}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">3</span>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">{% trans "Attend Each Other's Services" %}</h3>
+                                    <p>{% trans "Experience each other's religious practices to gain deeper understanding and show support." %}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary rounded-circle p-3 text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="fw-bold">4</span>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">{% trans "Define Your Boundaries" %}</h3>
+                                    <p>{% trans "Be clear about what aspects of your faith are non-negotiable and what you're flexible about." %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h2 class="h4 mb-0">{% trans "Find Your Interfaith Match" %}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4">{% trans "Use our advanced matching system to find compatible partners from different faith backgrounds:" %}</p>
+                    
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label for="yourFaith" class="form-label">{% trans "Your Faith" %}</label>
+                            <select id="yourFaith" class="form-select">
+                                <option value="" selected>{% trans "Select Your Religion" %}</option>
+                                <option value="christianity">{% trans "Christianity" %}</option>
+                                <option value="islam">{% trans "Islam" %}</option>
+                                <option value="judaism">{% trans "Judaism" %}</option>
+                                <option value="hinduism">{% trans "Hinduism" %}</option>
+                                <option value="buddhism">{% trans "Buddhism" %}</option>
+                                <option value="sikhism">{% trans "Sikhism" %}</option>
+                                <option value="other">{% trans "Other" %}</option>
+                                <option value="spiritual">{% trans "Spiritual but not Religious" %}</option>
+                                <option value="agnostic">{% trans "Agnostic" %}</option>
+                                <option value="atheist">{% trans "Atheist" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="openToFaiths" class="form-label">{% trans "Open to Dating" %}</label>
+                            <select id="openToFaiths" class="form-select">
+                                <option value="any" selected>{% trans "Any Faith Background" %}</option>
+                                <option value="abrahamic">{% trans "Abrahamic Religions (Christianity, Islam, Judaism)" %}</option>
+                                <option value="dharmic">{% trans "Dharmic Religions (Hinduism, Buddhism, Jainism)" %}</option>
+                                <option value="specific">{% trans "Specific Religions" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="religiousImportance" class="form-label">{% trans "Religious Importance" %}</label>
+                            <select id="religiousImportance" class="form-select">
+                                <option value="">{% trans "Select Importance" %}</option>
+                                <option value="very">{% trans "Very Important" %}</option>
+                                <option value="somewhat">{% trans "Somewhat Important" %}</option>
+                                <option value="not">{% trans "Not Important" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="interfaithOpenness" class="form-label">{% trans "Interfaith Openness" %}</label>
+                            <select id="interfaithOpenness" class="form-select">
+                                <option value="">{% trans "Select Level" %}</option>
+                                <option value="very">{% trans "Very Open to Different Faiths" %}</option>
+                                <option value="somewhat">{% trans "Somewhat Open to Different Faiths" %}</option>
+                                <option value="specific">{% trans "Open to Specific Faiths Only" %}</option>
+                            </select>
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5">{% trans "Find Matches" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'religion:religion_home' %}" class="btn btn-outline-primary">{% trans "Back to Faith-Based Dating Home" %}</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

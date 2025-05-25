@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sugar Dating{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron bg-gradient-primary text-white">
+        <h1 class="display-4">Welcome to Sugar Dating</h1>
+        <p class="lead">Connect with generous sugar daddies/mommies or attractive sugar babies for mutually beneficial relationships.</p>
+        {% if not request.user.is_authenticated %}
+        <hr class="my-4 bg-light">
+        <p>Join our exclusive community today to find your perfect match!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'sugar:register' %}" role="button">Sign Up Now</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'sugar:login' %}" role="button">Login</a>
+        {% else %}
+        <hr class="my-4 bg-light">
+        <p>Browse profiles, set up your preferences, and connect with matches!</p>
+        <a class="btn btn-light btn-lg" href="{% url 'sugar:browse' %}" role="button">Browse Profiles</a>
+        <a class="btn btn-outline-light btn-lg ml-2" href="{% url 'sugar:profile_edit' %}" role="button">Edit Profile</a>
+        {% endif %}
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-crown fa-3x text-warning mb-3"></i>
+                    <h4 class="card-title">For Sugar Daddies & Mommies</h4>
+                    <p class="card-text">Connect with attractive companions who appreciate your success and generosity. Find meaningful relationships on your terms.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'sugar:daddy_signup' %}" class="btn btn-warning btn-sm">Register as Sugar Daddy/Mommy</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-gem fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">For Sugar Babies</h4>
+                    <p class="card-text">Meet successful mentors who can help elevate your lifestyle and provide guidance. Experience luxury and opportunity.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'sugar:baby_signup' %}" class="btn btn-primary btn-sm">Register as Sugar Baby</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                    <h4 class="card-title">Safety & Privacy</h4>
+                    <p class="card-text">Your security is our priority. All profiles are verified, and your personal information remains confidential.</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url 'sugar:safety' %}" class="btn btn-success btn-sm">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Premium Features</h2>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="row no-gutters">
+                    <div class="col-md-4 bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-check-circle fa-4x text-success"></i>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Verification Badge</h5>
+                            <p class="card-text">Get a verified badge on your profile to stand out and build trust with potential matches.</p>
+                            <a href="{% url 'sugar:verification' %}" class="btn btn-sm btn-outline-primary">Get Verified</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="row no-gutters">
+                    <div class="col-md-4 bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-star fa-4x text-warning"></i>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Premium Membership</h5>
+                            <p class="card-text">Unlock premium features like advanced search filters, priority matching, and unlimited messaging.</p>
+                            <a href="{% url 'sugar:premium' %}" class="btn btn-sm btn-outline-warning">Go Premium</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

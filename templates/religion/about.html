@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "About Faith-Based Dating" %} - Super Dating App{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">{% trans "About Faith-Based Dating" %}</h1>
+            <p class="lead">{% trans "Connecting people who share faith, values, and spiritual beliefs" %}</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">{% trans "Our Mission" %}</h2>
+                    <p class="card-text">
+                        {% trans "Our faith-based dating platform is designed to connect individuals who prioritize their spiritual journey and religious beliefs in their relationships. We understand that for many, faith isn't just a preference but a foundation for building a meaningful partnership." %}
+                    </p>
+                    <p class="card-text">
+                        {% trans "We aim to create a respectful space where people can connect based on shared religious values, practices, and traditions - from meeting someone of the same denomination to exploring connections across different faith backgrounds." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">{% trans "Why Faith Matters" %}</h2>
+                    <p class="card-text">
+                        {% trans "Relationships that share spiritual alignment often have: " %}
+                    </p>
+                    <ul class="card-text">
+                        <li>{% trans "Shared values and worldviews" %}</li>
+                        <li>{% trans "Common practices and traditions" %}</li>
+                        <li>{% trans "Better understanding during life challenges" %}</li>
+                        <li>{% trans "Aligned views on family, marriage, and important life decisions" %}</li>
+                        <li>{% trans "A community and support system that celebrates both partners" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">{% trans "Our Features" %}</h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Faith-Based Matching" %}</h3>
+                            </div>
+                            <p>{% trans "Our algorithm prioritizes religious compatibility in matches" %}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-church"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Denomination Filters" %}</h3>
+                            </div>
+                            <p>{% trans "Search by specific denominations or faith traditions" %}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle bg-primary text-white me-3">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h3 class="h5 mb-0">{% trans "Values Compatibility" %}</h3>
+                            </div>
+                            <p>{% trans "Match on importance of specific religious values and practices" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{% url 'religion:religion_home' %}" class="btn btn-primary">{% trans "Return to Faith-Based Dating Home" %}</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Your Matches" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .matches-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .match-card {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    margin-bottom: 25px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  
+  .match-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .match-img {
+    height: 250px;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  .match-info {
+    padding: 20px;
+  }
+  
+  .match-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  
+  .match-details {
+    color: #777;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .btn-message {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: white;
+  }
+  
+  .btn-message:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    color: white;
+  }
+  
+  .btn-unlike {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+  
+  .unread-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+  
+  .no-matches {
+    text-align: center;
+    padding: 50px 0;
+    color: #777;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="matches-container">
+        <h2 class="mb-4">{% trans "Your Matches" %}</h2>
+        
+        {% if matches %}
+          <div class="row">
+            {% for match_data in matches %}
+              <div class="col-md-6 col-lg-4">
+                <div class="match-card position-relative">
+                  {% if match_data.unread_count > 0 %}
+                    <div class="unread-badge">{{ match_data.unread_count }}</div>
+                  {% endif %}
+                  
+                  {% if match_data.mainstream_profile.photo_1 %}
+                    <img src="{{ match_data.mainstream_profile.photo_1.url }}" class="match-img" alt="Profile">
+                  {% elif match_data.profile.profile_picture %}
+                    <img src="{{ match_data.profile.profile_picture.url }}" class="match-img" alt="Profile">
+                  {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" class="match-img" alt="Profile">
+                  {% endif %}
+                  
+                  <div class="match-info">
+                    <div class="match-name">{{ match_data.other_user.get_full_name|default:match_data.other_user.username }}</div>
+                    <div class="match-details">
+                      {% if match_data.profile.age %}{{ match_data.profile.age }} {% trans "years old" %}{% endif %}
+                      {% if match_data.profile.location %} • {{ match_data.profile.location }}{% endif %}
+                    </div>
+                    <div class="match-details">
+                      {{ match_data.mainstream_profile.get_looking_for_display|default:"" }}
+                      {% if match_data.mainstream_profile.occupation %} • {{ match_data.mainstream_profile.occupation }}{% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                      <a href="{% url 'mainstream:profile_detail' match_data.other_user.username %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-user"></i> {% trans "View Profile" %}
+                      </a>
+                      
+                      {% if match_data.conversation %}
+                        <a href="{% url 'messaging:conversation' match_data.conversation.id %}" class="btn btn-message">
+                          <i class="fas fa-comments"></i> {% trans "Message" %}
+                        </a>
+                      {% else %}
+                        <button class="btn btn-message start-conversation" data-username="{{ match_data.other_user.username }}">
+                          <i class="fas fa-comments"></i> {% trans "Start Chat" %}
+                        </button>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-2">
+                      <button class="btn btn-unlike unlike-btn" data-username="{{ match_data.other_user.username }}">
+                        <i class="fas fa-heart-broken"></i> {% trans "Unmatch" %}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="no-matches">
+            <i class="fas fa-heart-broken fa-4x mb-3 text-muted"></i>
+            <h3>{% trans "No matches yet" %}</h3>
+            <p>{% trans "Like more profiles to find your matches" %}</p>
+            <a href="{% url 'mainstream:browse_profiles' %}" class="btn btn-primary mt-3">
+              <i class="fas fa-search"></i> {% trans "Browse Profiles" %}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Add CSRF token to all AJAX requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Unlike profile (unmatch)
+    $('.unlike-btn').click(function() {
+      const btn = $(this);
+      const username = btn.data('username');
+      
+      if (confirm('{% trans "Are you sure you want to unmatch with this person?" %}')) {
+        $.ajax({
+          url: `/mainstream/profile/${username}/unlike/`,
+          type: 'POST',
+          headers: {
+            'X-CSRFToken': csrftoken
+          },
+          success: function(response) {
+            if (response.status === 'unliked') {
+              toastr.info(response.message);
+              
+              // Remove the match card
+              btn.closest('.col-md-6').fadeOut(function() {
+                $(this).remove();
+                
+                // If no matches left, show the no matches message
+                if ($('.match-card').length === 0) {
+                  location.reload();
+                }
+              });
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error("Error:", error);
+            toastr.error('{% trans "There was an error processing your request" %}');
+          }
+        });
+      }
+    });
+    
+    // Start conversation
+    $('.start-conversation').click(function() {
+      const username = $(this).data('username');
+      const btn = $(this);
+      
+      $.ajax({
+        url: `/messaging/start/${username}/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.conversation_id) {
+            window.location.href = `/messaging/conversation/${response.conversation_id}/`;
+          } else {
+            toastr.error('{% trans "Could not start conversation" %}');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error:", error);
+          toastr.error('{% trans "There was an error processing your request" %}');
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

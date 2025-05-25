@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Interests - Profile Onboarding{% endblock %}
+
+{% block extra_css %}
+<style>
+    .onboarding-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .onboarding-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .onboarding-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .onboarding-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .progress-container {
+        margin-bottom: 30px;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background-color: #007bff;
+        width: 60%; /* (step / total_steps) * 100 */
+    }
+    
+    .step-indicators {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    
+    .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 20%;
+    }
+    
+    .step-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    
+    .step-dot.active {
+        background-color: #007bff;
+    }
+    
+    .step-dot.completed {
+        background-color: #28a745;
+    }
+    
+    .step-dot.completed::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+    }
+    
+    .step-label {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+    }
+    
+    .onboarding-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .form-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .interest-tip {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+    
+    .interest-tip p {
+        color: #555;
+        margin-bottom: 0;
+    }
+    
+    .category-section {
+        margin-bottom: 25px;
+    }
+    
+    .category-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #333;
+        padding-bottom: 5px;
+        border-bottom: 1px dashed #eee;
+    }
+    
+    .interests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .interest-item {
+        position: relative;
+    }
+    
+    .interest-checkbox {
+        position: absolute;
+        opacity: 0;
+    }
+    
+    .interest-label {
+        display: block;
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .interest-checkbox:checked + .interest-label {
+        background-color: #e9f7fe;
+        border-color: #007bff;
+        color: #007bff;
+        font-weight: bold;
+    }
+    
+    .interest-label:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+    
+    .search-bar {
+        margin-bottom: 20px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 30px;
+        font-size: 16px;
+    }
+    
+    .search-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+    
+    .btn-back {
+        padding: 12px 25px;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-back:hover {
+        background-color: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-next {
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-next:hover {
+        background-color: #0069d9;
+    }
+    
+    .selected-count {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .selected-count-number {
+        font-weight: bold;
+        color: #007bff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="onboarding-header">
+        <h1>Your Interests</h1>
+        <p>Select interests to help us find matches with similar passions.</p>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ step|floatformat:0 }}%;"></div>
+        </div>
+        <div class="step-indicators">
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Get Started</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot completed"></div>
+                <div class="step-label">Photos</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-label">Interests</div>
+            </div>
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-label">Preferences</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="onboarding-content">
+        <h2 class="form-section-title">What do you enjoy?</h2>
+        
+        <div class="interest-tip">
+            <p>Select at least 5 interests that represent you. People with similar interests are more likely to connect!</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="search-bar">
+                <input type="text" id="interest-search" class="search-input" placeholder="Search interests...">
+            </div>
+            
+            <div class="selected-count">
+                Selected: <span id="selected-count-number" class="selected-count-number">0</span>
+            </div>
+            
+            {% for category, interests in interests_by_category.items %}
+            <div class="category-section" data-category="{{ category|lower }}">
+                <h3 class="category-title">{{ category }}</h3>
+                <div class="interests-grid">
+                    {% for interest in interests %}
+                    <div class="interest-item">
+                        <input type="checkbox" name="interests" id="interest-{{ interest.id }}" value="{{ interest.id }}" class="interest-checkbox" {% if interest.id in current_interests %}checked{% endif %}>
+                        <label for="interest-{{ interest.id }}" class="interest-label" data-name="{{ interest.name|lower }}">{{ interest.name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="btn-container">
+                <a href="{% url 'accounts:onboarding_photos' %}" class="btn-back">Back</a>
+                <button type="submit" class="btn-next">Next: Set Preferences</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('interest-search');
+        const interestItems = document.querySelectorAll('.interest-item');
+        const categoryContainers = document.querySelectorAll('.category-section');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            interestItems.forEach(item => {
+                const label = item.querySelector('.interest-label');
+                const interestName = label.getAttribute('data-name');
+                
+                if (interestName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Hide categories with no visible interests
+            categoryContainers.forEach(category => {
+                const visibleInterests = category.querySelectorAll('.interest-item[style="display: block"]');
+                if (visibleInterests.length === 0) {
+                    category.style.display = 'none';
+                } else {
+                    category.style.display = 'block';
+                }
+            });
+        });
+        
+        // Count selected interests
+        const interestCheckboxes = document.querySelectorAll('.interest-checkbox');
+        const selectedCountSpan = document.getElementById('selected-count-number');
+        
+        function updateSelectedCount() {
+            const checkedCount = document.querySelectorAll('.interest-checkbox:checked').length;
+            selectedCountSpan.textContent = checkedCount;
+        }
+        
+        interestCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+        
+        // Initialize the counter
+        updateSelectedCount();
+    });
+</script>
+{% endblock %} 

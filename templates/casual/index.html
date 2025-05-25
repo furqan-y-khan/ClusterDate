@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+
+{% block title %}Casual Dating{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-hero {
+        background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        color: white;
+        padding: 4rem 0;
+        border-radius: var(--radius-lg);
+        margin-bottom: 3rem;
+    }
+    .category-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    .matches-container {
+        margin-top: 3rem;
+    }
+    .match-card {
+        border: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .match-card:hover {
+        transform: translateY(-10px);
+    }
+    .match-img {
+        height: 300px;
+        object-fit: cover;
+        border-top-left-radius: var(--radius-md);
+        border-top-right-radius: var(--radius-md);
+    }
+    .match-info {
+        padding: 1.5rem;
+    }
+    .match-name {
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .match-location {
+        color: var(--gray);
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    .match-bio {
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        color: var(--dark);
+    }
+    .match-tags {
+        margin-bottom: 1.5rem;
+    }
+    .match-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+    .filter-card {
+        border: none;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+    .filter-header {
+        background-color: var(--primary-light);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-top-left-radius: var(--radius-md);
+        border-top-right-radius: var(--radius-md);
+    }
+    .filter-body {
+        padding: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Hero -->
+<div class="category-hero text-center mb-5">
+    <div class="container">
+        <div class="category-icon">
+            <i class="fas fa-fire"></i>
+        </div>
+        <h1 class="display-4 fw-bold mb-3">Casual Dating</h1>
+        <p class="lead mb-4">Find like-minded individuals for fun, no-strings-attached connections</p>
+        <div class="d-flex justify-content-center">
+            <a href="#matches" class="btn btn-light btn-lg px-4">
+                <i class="fas fa-search me-2"></i> Browse Matches
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3">
+            <div class="filter-card">
+                <div class="filter-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i> Filter Matches</h5>
+                </div>
+                <div class="filter-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Distance</label>
+                            <select class="form-select">
+                                <option>5 miles</option>
+                                <option>10 miles</option>
+                                <option selected>25 miles</option>
+                                <option>50 miles</option>
+                                <option>100 miles</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Age Range</label>
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control me-2" value="18" min="18" max="99">
+                                <span>to</span>
+                                <input type="number" class="form-control ms-2" value="45" min="18" max="99">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Looking For</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="looking-casual" checked>
+                                <label class="form-check-label" for="looking-casual">Casual Dating</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="looking-hookups" checked>
+                                <label class="form-check-label" for="looking-hookups">Hookups</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="looking-friends">
+                                <label class="form-check-label" for="looking-friends">Friends with Benefits</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Interests</label>
+                            <div class="d-flex flex-wrap">
+                                <span class="interest-tag m-1">Parties</span>
+                                <span class="interest-tag m-1">Nightlife</span>
+                                <span class="interest-tag m-1">Travel</span>
+                                <span class="interest-tag m-1">Adventure</span>
+                                <span class="interest-tag m-1">Food</span>
+                                <span class="interest-tag m-1">Music</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i> Apply Filters
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Matches Grid -->
+        <div class="col-lg-9">
+            <h2 class="mb-4" id="matches">Suggested Matches</h2>
+            
+            <div class="row matches-container">
+                {% for i in '123456'|make_list %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card match-card shadow-sm">
+                        <img src="https://source.unsplash.com/random/600x900/?portrait,person,{{ forloop.counter }}" class="match-img" alt="Profile Image">
+                        <div class="match-info">
+                            <h5 class="match-name">
+                                {% if forloop.counter == 1 %}Alex, 28
+                                {% elif forloop.counter == 2 %}Jordan, 25
+                                {% elif forloop.counter == 3 %}Taylor, 31
+                                {% elif forloop.counter == 4 %}Sam, 24
+                                {% elif forloop.counter == 5 %}Jamie, 27
+                                {% else %}Casey, 29
+                                {% endif %}
+                            </h5>
+                            <p class="match-location">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                {% if forloop.counter == 1 %}2 miles away
+                                {% elif forloop.counter == 2 %}5 miles away
+                                {% elif forloop.counter == 3 %}1 mile away
+                                {% elif forloop.counter == 4 %}3 miles away
+                                {% elif forloop.counter == 5 %}4 miles away
+                                {% else %}6 miles away
+                                {% endif %}
+                            </p>
+                            <div class="match-tags">
+                                {% if forloop.counter == 1 %}
+                                <span class="badge badge-primary">Parties</span>
+                                <span class="badge badge-secondary">Travel</span>
+                                {% elif forloop.counter == 2 %}
+                                <span class="badge badge-info">Music</span>
+                                <span class="badge badge-primary">Nightlife</span>
+                                {% elif forloop.counter == 3 %}
+                                <span class="badge badge-secondary">Adventure</span>
+                                <span class="badge badge-success">Food</span>
+                                {% elif forloop.counter == 4 %}
+                                <span class="badge badge-primary">Parties</span>
+                                <span class="badge badge-info">Music</span>
+                                {% elif forloop.counter == 5 %}
+                                <span class="badge badge-success">Food</span>
+                                <span class="badge badge-secondary">Travel</span>
+                                {% else %}
+                                <span class="badge badge-primary">Nightlife</span>
+                                <span class="badge badge-secondary">Adventure</span>
+                                {% endif %}
+                            </div>
+                            <div class="match-actions">
+                                <button class="btn btn-sm btn-primary match-btn" data-user-id="{{ forloop.counter }}">
+                                    <i class="fas fa-user-plus me-1"></i> Match
+                                </button>
+                                <button class="btn btn-sm btn-primary like-btn" data-user-id="{{ forloop.counter }}">
+                                    <i class="fas fa-heart me-1"></i> Like
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary px-4">
+                    <i class="fas fa-sync-alt me-2"></i> Load More
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light rounded p-5 mt-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h3>Casual Dating Tips</h3>
+                <ul class="mb-0">
+                    <li class="mb-2">Be honest about your intentions from the start</li>
+                    <li class="mb-2">Respect boundaries and practice consent</li>
+                    <li class="mb-2">Prioritize safety - meet in public places first</li>
+                    <li class="mb-2">Maintain open communication with your matches</li>
+                    <li>Remember that casual doesn't mean thoughtless</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Safety First</h3>
+                <p>At Super Dating App, we prioritize your safety:</p>
+                <div class="d-flex mb-2">
+                    <div class="me-3 text-primary">
+                        <i class="fas fa-shield-alt fa-lg"></i>
+                    </div>
+                    <div>
+                        <strong>Verified Profiles</strong>
+                        <p class="mb-0 text-muted small">All users undergo our verification process</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="me-3 text-primary">
+                        <i class="fas fa-user-secret fa-lg"></i>
+                    </div>
+                    <div>
+                        <strong>Privacy Controls</strong>
+                        <p class="mb-0 text-muted small">You control who sees your information</p>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="me-3 text-primary">
+                        <i class="fas fa-flag fa-lg"></i>
+                    </div>
+                    <div>
+                        <strong>Easy Reporting</strong>
+                        <p class="mb-0 text-muted small">Report inappropriate behavior with one click</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Add CSRF token to all AJAX requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Match button click handler
+    $('.match-btn').click(function() {
+      const btn = $(this);
+      const userId = btn.data('user-id');
+      
+      // In a real implementation, you would get the actual user ID from the server
+      // This is a placeholder since we're using sample data
+      toastr.success('Match request sent! If they match with you too, you can start chatting.');
+      
+      // Change button to "Requested"
+      btn.html('<i class="fas fa-check me-1"></i> Requested');
+      btn.removeClass('btn-primary').addClass('btn-success');
+      btn.prop('disabled', true);
+      
+      // In a real implementation, you would make an AJAX call like:
+      /*
+      $.ajax({
+        url: `/core/match-request/${userId}/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.status === 'match') {
+            toastr.success(response.message);
+            
+            // Update UI to show it's a match
+            btn.html('<i class="fas fa-link me-1"></i> Matched');
+            
+            // Also update the like button
+            const likeBtn = btn.siblings('.like-btn');
+            if (likeBtn.length) {
+              likeBtn.html('<i class="fas fa-check me-1"></i> Liked');
+              likeBtn.removeClass('btn-primary').addClass('btn-success');
+              likeBtn.prop('disabled', true);
+            }
+          } else {
+            toastr.success('Match request sent! If they match with you too, you can start chatting.');
+            
+            // Update button to show request sent
+            btn.html('<i class="fas fa-check me-1"></i> Requested');
+            btn.removeClass('btn-primary').addClass('btn-success');
+            btn.prop('disabled', true);
+          }
+        },
+        error: function() {
+          toastr.error('There was an error processing your request');
+        }
+      });
+      */
+    });
+    
+    // Like profile button
+    $('.like-btn').click(function() {
+      const btn = $(this);
+      const userId = btn.data('user-id');
+      
+      // In a real implementation, you would get the actual user ID from the server
+      // This is a placeholder since we're using sample data
+      toastr.success('Profile liked! If they like you back, it will be a match!');
+      
+      // Change button to "Liked"
+      btn.html('<i class="fas fa-check me-1"></i> Liked');
+      btn.removeClass('btn-primary').addClass('btn-success');
+      btn.prop('disabled', true);
+      
+      // In a real implementation, you would make an AJAX call like:
+      /*
+      $.ajax({
+        url: `/core/like/${userId}/`,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+          if (response.is_match) {
+            toastr.success("It's a match! You can now message each other.");
+            
+            // Update match button if it exists
+            const matchBtn = btn.siblings('.match-btn');
+            if (matchBtn.length) {
+              matchBtn.html('<i class="fas fa-link me-1"></i> Matched');
+              matchBtn.removeClass('btn-primary').addClass('btn-success');
+              matchBtn.prop('disabled', true);
+            }
+          } else {
+            toastr.success('Profile liked! If they like you back, it will be a match!');
+          }
+          
+          // Change button style
+          btn.html('<i class="fas fa-check me-1"></i> Liked');
+          btn.removeClass('btn-primary').addClass('btn-success');
+          btn.prop('disabled', true);
+        },
+        error: function() {
+          toastr.error('There was an error processing your request');
+        }
+      });
+      */
+    });
+  });
+</script>
+{% endblock %} 
